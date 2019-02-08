@@ -1,0 +1,118 @@
+{
+  "source": {
+    "action": {
+      "name": "FirstEventName",
+      "context": "ThisIsAContext",
+      "data": {
+        "mainID": "aa2e3272-e949-4bfe-bd85-0519af5f84b8",
+        "referenceID": "70310977",
+        "objectID": "70310977",
+        "imageIDs": [
+          3577988,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3577988,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mainIndex": 0,
+        "mainColor": "#464646",
+        "mainWidthIn": 12,
+        "mainHeightIn": 12,
+        "secondaryWidthPt": 864,
+        "secondaryHeightPt": 864,
+        "secondaryAreaPt": 746496,
+        "secondaryLengthPt": null,
+        "machineInfo": {
+          "BlueTooth": false,
+          "BlueToothDeviceID": "",
+          "BootLoader": false,
+          "DeviceID": 1,
+          "DeviceType": "DeviceCodeName",
+          "Firmware": {
+            "UpdateOptions": [
+              {
+                "Type": "Recover",
+                "Value": {
+                  "File": "Firmware-3.091.bin",
+                  "Version": "3.091"
+                }
+              }
+            ],
+            "Version": {
+              "ButtonBoard": 0,
+              "FirmwareHi": 0,
+              "FirmwareLo": 3091,
+              "Hardware": 3
+            }
+          },
+          "HID": false,
+          "IsOpened": true,
+          "MachineData": {
+            "MachineID": 208598,
+            "bluetoothVersion": 1,
+            "bypassIPCheck": false,
+            "calibrationValuesStored": false,
+            "companyID": 14,
+            "companyName": "AMAZON.COM",
+            "duration": 14,
+            "durationType": "Day",
+            "durationTypeID": 1,
+            "Description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "Url": "https://d2e2oszluhwxlw.cloudfront.net/thing/pdfs/content/B-Included-with-machine-Links.pdf",
+            "firmwareValuesStored": "3091",
+            "machineType": "TypeName",
+            "machineTypeID": 8,
+            "primaryUserSet": true
+          },
+          "MachineName": "ProductName : 5 (USB)",
+          "Port": 5,
+          "Serial": "SF6JW46U2W46H2W456U"
+        },
+        "buttonPosition": 1,
+        "sourceGUID": 82,
+        "sourceID": "59567a3319b49911c30e5d8b",
+        "isDraftMode": false,
+        "openedType": "none",
+        "startedSource": "CampFire"
+      }
+    },
+    "app": {
+      "name": "AppName",
+      "environment": "app.example.com"
+    }
+  },
+  "user": {
+    "device": {
+      "platform": "Win32",
+      "language": "en-US",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
+      "model": "Chrome",
+      "bowser": "Chrome",
+      "version": "61.0"
+    },
+    "userID": "1344763"
+  },
+  "status": {
+    "startedOn": "2017-10-04T20:33:02.392Z",
+    "completedOn": "2017-10-04T20:33:02.393Z"
+  }
+}
