@@ -62,7 +62,13 @@ namespace Betlln.Data.Integration.Json
             }
         }
 
-        //http://anotherdevblog.net/posts/flattening-json-in-json-net
+        #region DOM Transveral
+
+        /*
+            The code in this region was originally published on http://anotherdevblog.net/posts/flattening-json-in-json-net.
+            It has been modified from its original form.
+        */
+
         private static IEnumerable<JValue> GetLeafValues(JToken jToken)
         {
             if (jToken is JValue jValue)
@@ -121,6 +127,8 @@ namespace Betlln.Data.Integration.Json
                 }
             }
         }
+
+        #endregion
 
         private static bool IsArray(JsonProperty property)
         {

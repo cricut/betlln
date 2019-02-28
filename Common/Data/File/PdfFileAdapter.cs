@@ -41,7 +41,15 @@ namespace Betlln.Data.File
             return new Enumerator(contentLines);
         }
 
-        //thanks to https://stackoverflow.com/questions/30477556/how-to-convert-pdf-file-to-excel-in-c-sharp
+        /// <summary>
+        /// Converts a PDF document into raw text. (Does not work well with PDFs that contain images)
+        /// </summary>
+        /// <remarks>
+        /// This code was originally published on StackOverflow (https://stackoverflow.com/a/30478021/1687106)
+        /// by Dissimilis (https://stackoverflow.com/users/743848/dissimilis)
+        /// and is used by permission. It has been modified from its original form.
+        /// </remarks>
+        /// <returns></returns>
         private string GetPdfText()
         {
             StringBuilder documentContent = new StringBuilder();
