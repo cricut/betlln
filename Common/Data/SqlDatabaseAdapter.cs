@@ -38,9 +38,9 @@ namespace Betlln.Data
             Transaction = connection.BeginTransaction();
         }
 
-        protected DataTable ExecuteQueryStoredProcedure(string storedProcedure)
+        protected DataTable ExecuteQueryStoredProcedure(string storedProcedure, IEnumerable<SqlParameter> parameters = null)
         {
-            return ExecuteStoredProcedure(ConnectionAddress, storedProcedure, null, BuildDataTable);
+            return ExecuteStoredProcedure(ConnectionAddress, storedProcedure, parameters, BuildDataTable);
         }
 
         private static DataTable BuildDataTable(SqlCommand command)
