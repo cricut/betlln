@@ -24,7 +24,7 @@ namespace Betlln.Data
             return addressBuilder.ToString();
         }
 
-        private string ConnectionAddress { get; }
+        protected string ConnectionAddress { get; }
         public SqlTransaction Transaction { get; private set; }
 
         public void BeginTransaction()
