@@ -24,7 +24,7 @@ namespace Betlln.Data
             return addressBuilder.ToString();
         }
 
-        private string ConnectionAddress { get; }
+        protected string ConnectionAddress { get; }
         public SqlTransaction Transaction { get; private set; }
 
         public void BeginTransaction()
@@ -38,9 +38,9 @@ namespace Betlln.Data
             Transaction = connection.BeginTransaction();
         }
 
-        protected DataTable ExecuteQueryStoredProcedure(string storedProcedure)
+        protected DataTable ExecuteQueryStoredProcedure(string storedProcedure, IEnumerable<SqlParameter> parameters = null)
         {
-            return ExecuteStoredProcedure(ConnectionAddress, storedProcedure, null, BuildDataTable);
+            return ExecuteStoredProcedure(ConnectionAddress, storedProcedure, parameters, BuildDataTable);
         }
 
         private static DataTable BuildDataTable(SqlCommand command)

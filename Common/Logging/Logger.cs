@@ -48,6 +48,11 @@ namespace Betlln.Logging
                 throw new ArgumentNullException(nameof(entry));
             }
 
+            if (string.IsNullOrWhiteSpace(entry.Message))
+            {
+                throw new ArgumentException("Message is a required field.");
+            }
+
             if (entry.LogDate == DateTime.MinValue)
             {
                 entry.LogDate = DateTime.Now;

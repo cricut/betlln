@@ -30,8 +30,8 @@ namespace Betlln.Logging
                 (
                     _connectionAddress,
                     ProcedureName, 
-                    new SqlParameter("@ApplicationName", SqlDbType.VarChar) {Value = logEntry.ApplicationName},
-                    new SqlParameter("@ApplicationVersion", SqlDbType.VarChar) {Value = logEntry.ApplicationVersion.ToString()},
+                    new SqlParameter("@ApplicationName", SqlDbType.VarChar) {Value = (object) logEntry.ApplicationName ?? DBNull.Value},
+                    new SqlParameter("@ApplicationVersion", SqlDbType.VarChar) {Value = (object) logEntry.ApplicationVersion?.ToString() ?? DBNull.Value},
                     new SqlParameter("@MachineName", SqlDbType.NVarChar) {Value = Environment.MachineName},
                     new SqlParameter("@username", SqlDbType.NVarChar) {Value = logEntry.UserName},
                     new SqlParameter("@EventType", SqlDbType.VarChar) {Value = logEntry.EventType.ToString()},

@@ -14,7 +14,7 @@ namespace Betlln.Data.Integration.Core
             }
         }
 
-        //thanks to http://dotneteers.net/blogs/divedeeper/archive/2008/08/04/QueryingStaticClasses.aspx
+        //thanks to https://web.archive.org/web/20180808190939/http://dotneteers.net/blogs/divedeeper/archive/2008/08/04/QueryingStaticClasses.aspx
         private bool IsStatic(Type type)
         {
             return type.IsAbstract && type.IsSealed;
