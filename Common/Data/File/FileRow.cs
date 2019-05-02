@@ -45,7 +45,7 @@ namespace Betlln.Data.File
                 throw new InvalidOperationException($"Row # {rowNumber} has already been passed.");
             }
 
-            while ((fileData.Current?.RowNumber).GetValueOrDefault() < rowNumber)
+            while(fileData.Current != null && fileData.Current.RowNumber < rowNumber)
             {
                 fileData.MoveNext();
             }
