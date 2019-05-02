@@ -102,6 +102,16 @@ namespace Betlln
             return long.TryParse(s, out value);
         }
 
+        public static DateTime ToNext(this DateTime dateTime, DayOfWeek weekDay)
+        {
+            DateTime newDateTime = dateTime;
+            while (newDateTime.DayOfWeek != weekDay)
+            {
+                newDateTime = newDateTime.AddDays(1);
+            }
+            return newDateTime;
+        }
+
         public static DateTime DateTimeMin(DateTime a, DateTime b)
         {
             if (a < b)
