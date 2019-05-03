@@ -5,7 +5,7 @@ using Betlln.Data.Integration.Json;
 using DtsTests.Properties;
 using NUnit.Framework;
 
-namespace Tests
+namespace DtsTests
 {
     [TestFixture]
     public class JsonDocumentTests

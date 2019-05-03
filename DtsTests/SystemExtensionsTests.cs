@@ -12,7 +12,7 @@ namespace DtsTests
         public void Resolve_HandlesSimpleRelativePathCorrectly()
         {
             Uri currentUri = new Uri("http://webportal.retailer.com/webportalNew/Default.aspx");
-            string newRelativeUrl = "QueryInventory.aspx";
+            const string newRelativeUrl = "QueryInventory.aspx";
 
             Uri actual = currentUri.Resolve(newRelativeUrl);
 
@@ -24,7 +24,7 @@ namespace DtsTests
         public void GoToUrl_HandlesDirectRelativePathCorrectly()
         {
             Uri currentUri = new Uri("http://webportal.retailer.com/webportalNew/Default.aspx");
-            string newRelativeUrl = "/QueryInventory.aspx";
+            const string newRelativeUrl = "/QueryInventory.aspx";
 
             Uri actual = currentUri.Resolve(newRelativeUrl);
 

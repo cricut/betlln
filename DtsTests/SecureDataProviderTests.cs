@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using Betlln.Security;
 using NUnit.Framework;
 
-namespace Tests
+namespace DtsTests
 {
     [TestFixture]
     public class SecureDataProviderTests

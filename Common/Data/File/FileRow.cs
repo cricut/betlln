@@ -11,9 +11,8 @@ namespace Betlln.Data.File
             Cells = new List<DataCell>();
         }
 
-        // (useful for debugging)
-        // ReSharper disable once UnusedAutoPropertyAccessor.Local
-        private object RawContent { get; }
+        //useful for debugging
+        public object RawContent { get; }
 
         public uint RowNumber { get; set; }
         public List<DataCell> Cells { get; }
@@ -44,10 +43,11 @@ namespace Betlln.Data.File
             {
                 throw new InvalidOperationException($"Row # {rowNumber} has already been passed.");
             }
-
-            while ((fileData.Current?.RowNumber).GetValueOrDefault() < rowNumber)
+            
+            uint currentRowNumber = (fileData.Current?.RowNumber).GetValueOrDefault();
+            while (currentRowNumber < rowNumber && fileData.MoveNext()) 
             {
-                fileData.MoveNext();
+                currentRowNumber = (fileData.Current?.RowNumber).GetValueOrDefault();
             }
 
             if (fileData.Current == null || fileData.Current.RowNumber != rowNumber)
