@@ -11,9 +11,8 @@ namespace Betlln.Data.File
             Cells = new List<DataCell>();
         }
 
-        // (useful for debugging)
-        // ReSharper disable once UnusedAutoPropertyAccessor.Local
-        private object RawContent { get; }
+        //useful for debugging
+        public object RawContent { get; }
 
         public uint RowNumber { get; set; }
         public List<DataCell> Cells { get; }
