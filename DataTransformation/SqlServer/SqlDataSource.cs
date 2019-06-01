@@ -10,28 +10,56 @@ namespace Betlln.Data.Integration.SqlServer
 {
     public class SqlDataSource : DataSource, ISqlActivity
     {
+        private CommandType _commandType;
+        private string _commandText;
+
         internal SqlDataSource()
         {
             Parameters = new ParameterSet();
         }
 
-        public string CommandText { get; set; }
+        public string CommandText
+        {
+            get
+            {
+                return _commandText;
+            }
+            set
+            {
+                _commandType = CommandType.Text;
+                _commandText = value;
+            }
+        }
+
+        public string ProcedureName
+        {
+            get
+            {
+                return _commandText;
+            }
+            set
+            {
+                _commandType = CommandType.StoredProcedure;
+                _commandText = value;
+            }
+        }
+
         public ParameterSet Parameters { get; }
         public uint Timeout { get; set; }
 
         public override DataTable GetResults()
         {
-            return this.Execute(CommandText, CommandType.Text, SqlActivityExtensionMethods.GetDataTable);
+            return this.Execute(_commandText, _commandType, SqlActivityExtensionMethods.GetDataTable);
         }
 
         public override T GetScalar<T>()
         {
-            return (T) this.Execute(CommandText, CommandType.Text, x => x.ExecuteScalar());
+            return (T) this.Execute(_commandText, _commandType, x => x.ExecuteScalar());
         }
 
         protected override IDataRecordIterator CreateReader()
         {
-            SqlDataReader reader = this.Execute(CommandText, CommandType.Text, x => x.ExecuteReader());
+            SqlDataReader reader = this.Execute(_commandText, _commandType, x => x.ExecuteReader());
             return new SqlRecordIterator(reader);
         }
 
