@@ -5,6 +5,10 @@ namespace Betlln.Data.Integration.FileSystem
 {
     public class CompressFolderTask : Task
     {
+        internal CompressFolderTask()
+        {
+        }
+
         public string SourceFolderPath { get; set; }
         public string CompressedFilePath { get; set; }
 

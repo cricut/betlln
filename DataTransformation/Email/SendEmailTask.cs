@@ -4,6 +4,10 @@ namespace Betlln.Data.Integration.Email
 {
     public class SendEmailTask : Task
     {
+        internal SendEmailTask()
+        {
+        }
+
         public string To { get; set; }
         public string Subject { get; set; }
         public string Body { get; set; }

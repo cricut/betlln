@@ -6,6 +6,10 @@ namespace Betlln.Data.Integration.FileSystem
 {
     public class DeleteFolderContentsTask : Task
     {
+        internal DeleteFolderContentsTask()
+        {
+        }
+
         public string Folder { get; set; }
 
         protected override void ExecuteTasks()
