@@ -1,4 +1,5 @@
-﻿using Betlln.Data.Integration.Core;
+﻿using System.IO.Compression;
+using Betlln.Data.Integration.Core;
 
 namespace Betlln.Data.Integration.FileSystem
 {
@@ -9,7 +10,7 @@ namespace Betlln.Data.Integration.FileSystem
 
         protected override void ExecuteTasks()
         {
-            throw new System.NotImplementedException();
+            ZipFile.CreateFromDirectory(SourceFolderPath, CompressedFilePath);
         }
     }
 }
