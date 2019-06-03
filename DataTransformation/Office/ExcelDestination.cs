@@ -14,7 +14,7 @@ namespace Betlln.Data.Integration.Office
         {
         }
 
-        public DataSource DataSource { get; set; }
+        public DataFeed DataSource { get; set; }
 
         private string _outputFileName;
         public string OutputFileName

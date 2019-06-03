@@ -74,9 +74,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AggregateTransformation.cs" />
     <Compile Include="AWS\DownloadS3FolderTask.cs" />
     <Compile Include="AWS\IS3Client.cs" />
     <Compile Include="AWS\IS3FolderSource.cs" />
+    <Compile Include="Core\TransformationKind.cs" />
     <Compile Include="Email\EmailConnectionManager.cs" />
     <Compile Include="FileSystem\CompressFolderTask.cs" />
     <Compile Include="Json\JsonDocumentCollection.cs" />
