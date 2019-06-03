@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using Betlln.Data.Integration.Core;
 using ClosedXML.Excel;
 
@@ -7,6 +8,8 @@ namespace Betlln.Data.Integration.Office
 {
     public class ExcelDestination : Task
     {
+        private const string ChangeTrackingCustomPropertyName = "dts_edit_status";
+
         internal ExcelDestination()
         {
         }
@@ -46,15 +49,63 @@ namespace Betlln.Data.Integration.Office
         protected override void ExecuteTasks()
         {
             DataTable dataTable = DataSource.GetResults();
-
-            using (XLWorkbook workbook = new XLWorkbook())
+            
+            using (XLWorkbook workbook = GetWorkbook())
             {
                 using (IXLWorksheet worksheet = workbook.Worksheets.Add(DestinationSheetName))
                 {
-                    worksheet.Cell(1, 1).InsertTable(dataTable);
-                    workbook.SaveAs(OutputFileName);
+                    int firstColumnNumber = 1;
+                    IXLCell topLeftCell = worksheet.Cell(firstColumnNumber, 1);
+
+                    IXLTable table = topLeftCell.InsertTable(dataTable);
+                    IXLColumns tableColumnsReference = worksheet.Columns(firstColumnNumber, table.ColumnCount());
+                    tableColumnsReference.AdjustToContents();
+
+                    IXLCustomProperty changeTrackingProperty = workbook.CustomProperties.CustomProperty(ChangeTrackingCustomPropertyName);
+                    if (changeTrackingProperty.Value.ToString() == EditStatus.Creating.ToString())
+                    {
+                        workbook.CustomProperties.Delete(ChangeTrackingCustomPropertyName);
+                        workbook.SaveAs(OutputFileName);
+                    }
+                    else
+                    {
+                        workbook.CustomProperties.Delete(ChangeTrackingCustomPropertyName);
+                        workbook.Save();
+                    }
                 }
             }
+        }
+
+        private XLWorkbook GetWorkbook()
+        {
+            if (!System.IO.File.Exists(OutputFileName))
+            {
+                XLWorkbook workbook = new XLWorkbook();
+                workbook.CustomProperties.Add(ChangeTrackingCustomPropertyName, EditStatus.Creating);
+                return workbook;
+            }
+            else
+            {
+                XLWorkbook workbook = new XLWorkbook(OutputFileName);
+
+                IXLCustomProperty xlCustomProperty = workbook.CustomProperties.FirstOrDefault(x => x.Name == ChangeTrackingCustomPropertyName);
+                if (xlCustomProperty != null)
+                {
+                    xlCustomProperty.Value = EditStatus.Editing;
+                }
+                else
+                {
+                    workbook.CustomProperties.Add(ChangeTrackingCustomPropertyName, EditStatus.Editing);
+                }
+
+                return workbook;
+            }
+        }
+
+        private enum EditStatus
+        {
+            Creating,
+            Editing
         }
     }
 }
