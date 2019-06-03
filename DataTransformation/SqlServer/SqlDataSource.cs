@@ -59,17 +59,30 @@ namespace Betlln.Data.Integration.SqlServer
 
         protected override IDataRecordIterator CreateReader()
         {
-            SqlDataReader reader = this.Execute(_commandText, _commandType, x => x.ExecuteReader());
-            return new SqlRecordIterator(reader);
+            return new SqlRecordIterator(this, _commandText, _commandType);
         }
 
         private class SqlRecordIterator : IDataRecordIterator
         {
-            private readonly SqlDataReader _reader;
+            private readonly ResourceStack _sqlPipeline;
 
-            public SqlRecordIterator(SqlDataReader reader)
+            public SqlRecordIterator(ISqlActivity parent, string commandText, CommandType commandType)
             {
-                _reader = reader;
+                _sqlPipeline = new ResourceStack();
+
+                SqlConnection connection = parent.GetConnection();
+                _sqlPipeline.Push(connection);
+
+                SqlCommand command = parent.BuildCommand(connection, commandText, commandType);
+                _sqlPipeline.Push(command);
+
+                SqlDataReader reader = command.ExecuteReader();
+                _sqlPipeline.Push(reader);
+            }
+
+            private SqlDataReader Reader
+            {
+                get { return (SqlDataReader) _sqlPipeline.Tip; }
             }
 
             public IEnumerator<DataRecord> GetEnumerator()
@@ -84,13 +97,13 @@ namespace Betlln.Data.Integration.SqlServer
 
             public bool MoveNext()
             {
-                if (_reader.Read())
+                if (Reader.Read())
                 {
                     DataRecord record = new DataRecord();
-                    for (int i = 0; i < _reader.FieldCount; i++)
+                    for (int i = 0; i < Reader.FieldCount; i++)
                     {
-                        string name = _reader.GetName(i);
-                        record[name] = _reader[i];
+                        string name = Reader.GetName(i);
+                        record[name] = Reader[i];
                     }
                     Current = record;
                     return true;
@@ -112,7 +125,7 @@ namespace Betlln.Data.Integration.SqlServer
 
             public void Dispose()
             {
-                _reader.Dispose();
+                _sqlPipeline.Dispose();
             }
         }
     }
