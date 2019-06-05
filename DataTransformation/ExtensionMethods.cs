@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Betlln.Data.Integration.Collections;
@@ -39,25 +40,41 @@ namespace Betlln.Data.Integration
 
         public static DataTable ToSlimmedDataTable(this DataTable wideDataTable, params string[] columnNames)
         {
-            DataTable slimmedDataTable = new DataTable();
-
+            List<DataElementPairing> columnMappings = new List<DataElementPairing>();
             foreach (string columnName in columnNames)
             {
-                DataColumn sourceColumn = wideDataTable.Columns[columnName];
-                slimmedDataTable.Columns.Add(new DataColumn(sourceColumn.ColumnName, sourceColumn.DataType));
+                columnMappings.Add(new DataElementPairing(columnName, columnName, wideDataTable.Columns[columnName].DataType));
             }
+            return wideDataTable.RepackageTable(columnMappings);
+        }
 
-            foreach (DataRow sourceRow in wideDataTable.Rows)
+        internal static DataTable RepackageTable(this DataTable sourceDataTable, List<DataElementPairing> newColumnMappings)
+        {
+            DataTable convertedDataTable = new DataTable();
+
+            foreach (DataElementPairing columnMapping in newColumnMappings)
             {
-                DataRow row = slimmedDataTable.NewRow();
-                foreach (DataColumn column in slimmedDataTable.Columns)
+                DataColumn sourceColumn = sourceDataTable.Columns[columnMapping.SourceName];
+                if (sourceColumn.DataType != columnMapping.ElementType)
                 {
-                    row[column] = sourceRow[column.ColumnName];
+                    throw new InvalidCastException();
                 }
-                slimmedDataTable.Rows.Add(row);
+                convertedDataTable.Columns.Add(new DataColumn(columnMapping.DestinationName, columnMapping.ElementType));
             }
 
-            return slimmedDataTable;
+            foreach (DataRow sourceRow in sourceDataTable.Rows)
+            {
+                DataRow convertedRow = convertedDataTable.NewRow();
+                foreach (DataColumn destinationColumn in convertedDataTable.Columns)
+                {
+                    string sourceColumnName = newColumnMappings.Find(x => x.DestinationName == destinationColumn.ColumnName).SourceName;
+                    convertedRow[destinationColumn] = sourceRow[sourceColumnName];
+                }
+
+                convertedDataTable.Rows.Add(convertedRow);
+            }
+
+            return convertedDataTable;
         }
 
         public static ListOf<string> GetColumnNames(this DataTable dataTable)

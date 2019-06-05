@@ -3,19 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using Betlln.Data.Integration.Core;
 using DataTable = System.Data.DataTable;
 
 namespace Betlln.Data.Integration.SqlServer
 {
-    public class SqlDataSource : DataSource, ISqlActivity
+    public class SqlDataSource : DataSource, ISqlActivity, IColumnMapper
     {
         private CommandType _commandType;
         private string _commandText;
+        private readonly List<DataElementPairing> _columnMappings;
 
         internal SqlDataSource()
         {
             Parameters = new ParameterSet();
+            _columnMappings = new List<DataElementPairing>();
         }
 
         public string CommandText
@@ -47,33 +50,51 @@ namespace Betlln.Data.Integration.SqlServer
         public ParameterSet Parameters { get; }
         public uint Timeout { get; set; }
 
+        public void MapColumns<T>(string sourceName, string outputAlias)
+        {
+            _columnMappings.Add(new DataElementPairing(sourceName, outputAlias, typeof(T)));
+        }
+
         public override DataTable GetResults()
         {
-            return this.Execute(_commandText, _commandType, SqlActivityExtensionMethods.GetDataTable);
+            DataTable rawDataTable = this.Execute(_commandText, _commandType, SqlActivityExtensionMethods.GetDataTable);
+            if (_columnMappings.Any())
+            {
+                return rawDataTable.RepackageTable(_columnMappings);
+            }
+            return rawDataTable;
         }
 
         public override T GetScalar<T>()
         {
+            if (_columnMappings.Any())
+            {
+                throw new InvalidOperationException();
+            }
             return (T) this.Execute(_commandText, _commandType, x => x.ExecuteScalar());
         }
 
         protected override IDataRecordIterator CreateReader()
         {
-            return new SqlRecordIterator(this, _commandText, _commandType);
+            return new SqlRecordIterator(this, _commandText, _commandType, _columnMappings);
         }
 
         private class SqlRecordIterator : IDataRecordIterator
         {
             private readonly ResourceStack _sqlPipeline;
+            private readonly List<DataElementPairing> _columnNameMappings;
+            private readonly Dictionary<int, DataElementPairing> _fieldMappings;
 
-            public SqlRecordIterator(ISqlActivity parent, string commandText, CommandType commandType)
+            public SqlRecordIterator(ISqlActivity sqlSettings, string commandText, CommandType commandType, List<DataElementPairing> columnNameMappings)
             {
                 _sqlPipeline = new ResourceStack();
+                _columnNameMappings = columnNameMappings;
+                _fieldMappings = new Dictionary<int, DataElementPairing>();
 
-                SqlConnection connection = parent.GetConnection();
+                SqlConnection connection = sqlSettings.GetConnection();
                 _sqlPipeline.Push(connection);
 
-                SqlCommand command = parent.BuildCommand(connection, commandText, commandType);
+                SqlCommand command = sqlSettings.BuildCommand(connection, commandText, commandType);
                 _sqlPipeline.Push(command);
 
                 SqlDataReader reader = command.ExecuteReader();
@@ -102,8 +123,7 @@ namespace Betlln.Data.Integration.SqlServer
                     DataRecord record = new DataRecord();
                     for (int i = 0; i < Reader.FieldCount; i++)
                     {
-                        string name = Reader.GetName(i);
-                        record[name] = Reader[i];
+                        PopulateRecordFromField(record, i);
                     }
                     Current = record;
                     return true;
@@ -112,6 +132,62 @@ namespace Betlln.Data.Integration.SqlServer
                 {
                     Current = null;
                     return false;
+                }
+            }
+
+            private void PopulateRecordFromField(DataRecord record, int fieldIndex)
+            {
+                if (_columnNameMappings.Any())
+                {
+                    if (_fieldMappings.ContainsKey(fieldIndex))
+                    {
+                        PopulateRecordFromKnownField(record, fieldIndex);
+                    }
+                    else
+                    {
+                        PopulateRecordFromUnknownField(record, fieldIndex);
+                    }
+                }
+                else
+                {
+                    string fieldName = Reader.GetName(fieldIndex);
+                    record[fieldName] = Reader[fieldIndex];
+                }
+            }
+
+            private void PopulateRecordFromKnownField(DataRecord record, int fieldIndex)
+            {
+                DataElementPairing pairing = _fieldMappings[fieldIndex];
+                if (pairing != null)
+                {
+                    record[pairing.DestinationName] = Reader[fieldIndex];
+                }
+            }
+
+            private void PopulateRecordFromUnknownField(DataRecord record, int fieldIndex)
+            {
+                string fieldName = Reader.GetName(fieldIndex);
+
+                DataElementPairing pairing =
+                    _columnNameMappings.Find(x => fieldName.Equals(x.SourceName, StringComparison.InvariantCultureIgnoreCase));
+                if (pairing != null)
+                {
+                    object rawValue = Reader[fieldIndex];
+
+                    if (rawValue != null && rawValue != DBNull.Value)
+                    {
+                        _fieldMappings.Add(fieldIndex, pairing);
+                        if (pairing.ElementType != rawValue.GetType())
+                        {
+                            throw new InvalidCastException();
+                        }
+                    }
+
+                    record[pairing.DestinationName] = rawValue;
+                }
+                else
+                {
+                    _fieldMappings.Add(fieldIndex, null);
                 }
             }
 
