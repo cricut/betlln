@@ -9,14 +9,20 @@ namespace Betlln.Data.Integration.Mail
         {
         }
 
-        public EmailConnectionManager(string hostAddress, ConnectionInfo loginInfo)
+        public EmailConnectionManager(ConnectionInfo connectionInfo)
         {
-            throw new NotImplementedException();
+            Host = connectionInfo.Destination;
+            User = connectionInfo.User;
+            Password = connectionInfo.Password;
         }
+
+        public string Host { get; set; }
+        public string User { get; set; }
+        public string Password { get; set; }
 
         public IDisposable GetConnection()
         {
-            throw new NotImplementedException();
+            return new EmailHostInfo(Host, User, Password);
         }
     }
 }
