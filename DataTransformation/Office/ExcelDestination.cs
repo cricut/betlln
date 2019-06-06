@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Betlln.Data.Integration.Core;
@@ -9,9 +10,11 @@ namespace Betlln.Data.Integration.Office
     public class ExcelDestination : Task
     {
         private const string ChangeTrackingCustomPropertyName = "dts_edit_status";
+        private readonly Dictionary<string, ExcelColumn> _columnSettings;
 
         internal ExcelDestination()
         {
+            _columnSettings = new Dictionary<string, ExcelColumn>();
         }
 
         public DataFeed DataSource { get; set; }
@@ -46,6 +49,17 @@ namespace Betlln.Data.Integration.Office
 
         public string DestinationSheetName { get; set; }
 
+        public ExcelColumn Column(string columnLetter)
+        {
+            columnLetter = columnLetter.ToUpper().Trim();
+            if (!_columnSettings.ContainsKey(columnLetter))
+            {
+                _columnSettings.Add(columnLetter, new ExcelColumn());
+            }
+
+            return _columnSettings[columnLetter];
+        }
+
         protected override void ExecuteTasks()
         {
             DataTable dataTable = DataSource.GetResults();
@@ -58,6 +72,17 @@ namespace Betlln.Data.Integration.Office
                     IXLCell topLeftCell = worksheet.Cell(firstColumnNumber, 1);
 
                     IXLTable table = topLeftCell.InsertTable(dataTable);
+                    foreach (string columnLetter in _columnSettings.Keys)
+                    {
+                        IXLRangeColumns targetColumn = table.Columns(columnLetter);
+                        ExcelColumn columnSettings = _columnSettings[columnLetter];
+                        targetColumn.Style.Alignment.SetHorizontal(columnSettings.HorizontalAlignment);
+                        if (!string.IsNullOrWhiteSpace(columnSettings.Format))
+                        {
+                            targetColumn.Style.NumberFormat.Format = columnSettings.Format;
+                        }
+                    }
+
                     IXLColumns tableColumnsReference = worksheet.Columns(firstColumnNumber, table.ColumnCount());
                     tableColumnsReference.AdjustToContents();
 

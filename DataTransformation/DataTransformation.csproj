@@ -110,6 +110,8 @@
     <Compile Include="Mail\EmailHostInfo.cs" />
     <Compile Include="MetaDataFeed.cs" />
     <Compile Include="Mongo\IMongoDB.cs" />
+    <Compile Include="Office\ExcelFormats.cs" />
+    <Compile Include="Office\ExcelColumn.cs" />
     <Compile Include="Office\ExcelDestination.cs" />
     <Compile Include="Mail\SendEmailTask.cs" />
     <Compile Include="SqlServer\MultiExecuteSqlTask.cs" />
