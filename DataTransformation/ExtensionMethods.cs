@@ -55,6 +55,10 @@ namespace Betlln.Data.Integration
             foreach (DataElementPairing columnMapping in newColumnMappings)
             {
                 DataColumn sourceColumn = sourceDataTable.Columns[columnMapping.SourceName];
+                if (sourceColumn == null)
+                {
+                    throw new DataException($"The column '{columnMapping.SourceName}' does not belong to the table.");
+                }
                 if (sourceColumn.DataType != columnMapping.ElementType)
                 {
                     throw new InvalidCastException();
