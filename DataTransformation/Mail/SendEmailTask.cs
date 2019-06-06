@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Betlln.Data.Integration.Core;
 using Betlln.Mail;
 using MimeKit;
@@ -7,8 +9,11 @@ namespace Betlln.Data.Integration.Mail
 {
     public class SendEmailTask : Task
     {
+        private readonly List<string> _filesToAttach;
+
         internal SendEmailTask()
         {
+            _filesToAttach = new List<string>();
         }
 
         public string To { get; set; }
@@ -18,7 +23,7 @@ namespace Betlln.Data.Integration.Mail
 
         public void AddAttachment(string filePath)
         {
-            throw new NotImplementedException();
+            _filesToAttach.Add(filePath);
         }
 
         public IConnectionManager Connection { get; set; }
@@ -51,6 +56,16 @@ namespace Betlln.Data.Integration.Mail
 
             BodyBuilder bodyBuilder = new BodyBuilder();
             bodyBuilder.TextBody = Body;
+
+            foreach (string fileToAttach in _filesToAttach)
+            {
+                using (Stream contentStream = System.IO.File.OpenRead(fileToAttach))
+                {
+                    string fileName = Path.GetFileName(fileToAttach);
+                    bodyBuilder.Attachments.Add(fileName, contentStream);
+                }
+            }
+
             message.Body = bodyBuilder.ToMessageBody();
 
             string displayName = !string.IsNullOrWhiteSpace(SenderDisplayName) ? SenderDisplayName : credentials.User;
