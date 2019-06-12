@@ -35,6 +35,10 @@ namespace Betlln.Data.Integration
 
         public static DataRow FirstRow(this DataTable dataTable)
         {
+            if (dataTable.Rows.Count == 0)
+            {
+                return null;
+            }
             return dataTable.Rows[0];
         }
 
