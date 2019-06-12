@@ -18,7 +18,6 @@ namespace Betlln.Data.Integration
         public static void Start()
         {
             Console.CancelKeyPress += OnCancelKeyPress;
-            AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
             SystemEvents.SessionEnding += OnWindowsLogout;
 
             try
@@ -47,12 +46,6 @@ namespace Betlln.Data.Integration
         {
             Debug.Print("Cancel key-press detected.");
             eventDetails.Cancel = true;
-            CancelRun();
-        }
-
-        private static void OnProcessExit(object sender, EventArgs e)
-        {
-            Notify.Log("The process is being killed, attempting to cancel operations.");
             CancelRun();
         }
 

@@ -68,13 +68,16 @@ namespace Betlln.Data.Integration.Core
                 maximumWaitTime = TimeSpan.MaxValue;
             }
 
-            bool allThreadsCompleted = System.Threading.Tasks.Task.WaitAll(AllTasks.ToArray(), maximumWaitTime);
-            if (!allThreadsCompleted)
+            if (AllTasks.Any())
             {
-                throw new TimeoutException();
-            }
+                bool allThreadsCompleted = System.Threading.Tasks.Task.WaitAll(AllTasks.ToArray(), maximumWaitTime);
+                if (!allThreadsCompleted)
+                {
+                    throw new TimeoutException();
+                }
 
-            AllTasks.Clear();
+                AllTasks.Clear();
+            }
         }
 
         protected virtual void PreExecute()
