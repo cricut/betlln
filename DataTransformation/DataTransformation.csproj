@@ -89,6 +89,8 @@
     <Compile Include="AWS\DownloadS3FolderTask.cs" />
     <Compile Include="AWS\IS3Client.cs" />
     <Compile Include="AWS\IS3FolderSource.cs" />
+    <Compile Include="AsyncFeed.cs" />
+    <Compile Include="ConditionalSplit.cs" />
     <Compile Include="Core\TransformationKind.cs" />
     <Compile Include="Mail\EmailConnectionManager.cs" />
     <Compile Include="FileSystem\CompressFolderTask.cs" />

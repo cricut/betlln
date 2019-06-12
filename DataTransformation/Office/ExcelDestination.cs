@@ -63,6 +63,11 @@ namespace Betlln.Data.Integration.Office
         protected override void ExecuteTasks()
         {
             DataTable dataTable = DataSource.GetResults();
+
+            if (dataTable.Columns.Count == 0)
+            {
+                return;
+            }
             
             using (XLWorkbook workbook = GetWorkbook())
             {

@@ -65,6 +65,15 @@ namespace Betlln.Data.Integration.Core
             }
         }
 
+        public void DeleteColumn(string columnName)
+        {
+            int i = GetOrdinal(columnName);
+            if (i >= 0)
+            {
+               _nameMap.Remove(columnName.ToLower());
+            }
+        }
+
         private int GetOrdinal(string name)
         {
             string key = name.ToLower();
@@ -74,12 +83,15 @@ namespace Betlln.Data.Integration.Core
         public List<ColumnInfo> GetLayout()
         {
             List<ColumnInfo> columns = new List<ColumnInfo>();
-            foreach (DataElement dataElement in _elements)
+
+            foreach (KeyValuePair<string, int> mapping in _nameMap)
             {
+                DataElement dataElement = _elements[mapping.Value];
                 Type type = dataElement.Value == null ? typeof(string) : dataElement.Value.GetType();
                 ColumnInfo columnInfo = new ColumnInfo(dataElement.ColumnName, type);
                 columns.Add(columnInfo);
             }
+
             return columns;
         }
     }
