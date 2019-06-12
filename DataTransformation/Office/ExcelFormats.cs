@@ -1,6 +1,6 @@
 ﻿namespace Betlln.Data.Integration.Office
 {
-    public class ExcelFormats
+    public static class ExcelFormats
     {
         public const string Accounting = "_($* #,##0.00_);_($* (#,##0.00);_($* \"-\"??_);_(@_)";
         public const string Percent = "0.00%";

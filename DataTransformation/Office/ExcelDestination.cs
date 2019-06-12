@@ -15,9 +15,11 @@ namespace Betlln.Data.Integration.Office
         internal ExcelDestination()
         {
             _columnSettings = new Dictionary<string, ExcelColumn>();
+            WriteEmptyTable = true;
         }
 
         public DataFeed DataSource { get; set; }
+        public bool WriteEmptyTable { get; set; }
 
         private string _outputFileName;
         public string OutputFileName
@@ -64,32 +66,34 @@ namespace Betlln.Data.Integration.Office
         {
             DataTable dataTable = DataSource.GetResults();
 
+            if (ShouldWriteToSheet(dataTable))
+            {
+                WriteToSheet(dataTable);
+            }
+        }
+
+        private bool ShouldWriteToSheet(DataTable dataTable)
+        {
             if (dataTable.Columns.Count == 0)
             {
-                return;
+                return false;
             }
-            
+
+            if (dataTable.Rows.Count == 0)
+            {
+                return WriteEmptyTable;
+            }
+
+            return true;
+        }
+
+        private void WriteToSheet(DataTable dataTable)
+        {
             using (XLWorkbook workbook = GetWorkbook())
             {
                 using (IXLWorksheet worksheet = workbook.Worksheets.Add(DestinationSheetName))
                 {
-                    int firstColumnNumber = 1;
-                    IXLCell topLeftCell = worksheet.Cell(firstColumnNumber, 1);
-
-                    IXLTable table = topLeftCell.InsertTable(dataTable);
-                    foreach (string columnLetter in _columnSettings.Keys)
-                    {
-                        IXLRangeColumns targetColumn = table.Columns(columnLetter);
-                        ExcelColumn columnSettings = _columnSettings[columnLetter];
-                        targetColumn.Style.Alignment.SetHorizontal(columnSettings.HorizontalAlignment);
-                        if (!string.IsNullOrWhiteSpace(columnSettings.Format))
-                        {
-                            targetColumn.Style.NumberFormat.Format = columnSettings.Format;
-                        }
-                    }
-
-                    IXLColumns tableColumnsReference = worksheet.Columns(firstColumnNumber, table.ColumnCount());
-                    tableColumnsReference.AdjustToContents();
+                    CreateFormattedTable(worksheet, dataTable);
 
                     IXLCustomProperty changeTrackingProperty = workbook.CustomProperties.CustomProperty(ChangeTrackingCustomPropertyName);
                     if (changeTrackingProperty.Value.ToString() == EditStatus.Creating.ToString())
@@ -104,6 +108,26 @@ namespace Betlln.Data.Integration.Office
                     }
                 }
             }
+        }
+
+        private void CreateFormattedTable(IXLWorksheet worksheet, DataTable dataTable)
+        {
+            IXLCell topLeftCell = worksheet.Cell(1, 1);
+
+            IXLTable table = topLeftCell.InsertTable(dataTable);
+            foreach (string columnLetter in _columnSettings.Keys)
+            {
+                IXLRangeColumns targetColumn = table.Columns(columnLetter);
+                ExcelColumn columnSettings = _columnSettings[columnLetter];
+                targetColumn.Style.Alignment.SetHorizontal(columnSettings.HorizontalAlignment);
+                if (!string.IsNullOrWhiteSpace(columnSettings.Format))
+                {
+                    targetColumn.Style.NumberFormat.Format = columnSettings.Format;
+                }
+            }
+
+            IXLColumns tableColumnsReference = worksheet.Columns(1, table.ColumnCount());
+            tableColumnsReference.AdjustToContents();
         }
 
         private XLWorkbook GetWorkbook()
