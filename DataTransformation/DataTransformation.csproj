@@ -122,6 +122,7 @@
     <Compile Include="Office\ExcelWorkbookDestination.cs" />
     <Compile Include="Mail\SendEmailTask.cs" />
     <Compile Include="Office\ExcelSheetTransformation.cs" />
+    <Compile Include="Office\ExcelWorkbookTransformation.cs" />
     <Compile Include="SqlServer\MultiExecuteSqlTask.cs" />
     <Compile Include="SqlServer\RecordReader.cs" />
     <Compile Include="SqlServer\TableMetaDataCache.cs" />
