@@ -9,7 +9,7 @@ namespace Betlln.Data.Integration.FileSystem
     {
         internal CompressedFileDestination()
         {
-            BufferSize = 1024;
+            BufferSize = 8192;
             Sources = new List<NamedStream>();
         }
 
