@@ -5,7 +5,7 @@ using Betlln.Data.Integration.Core;
 
 namespace Betlln.Data.Integration.FileSystem
 {
-    public class CompressedFileTransformation
+    public class CompressedFileTransformation : Transformation
     {
         public CompressedFileTransformation()
         {
@@ -15,29 +15,10 @@ namespace Betlln.Data.Integration.FileSystem
 
         public List<NamedStream> Sources { get; }
         public int BufferSize { get; set; }
-        public string OutputName { get; set; }
 
-        private NamedStream _output;
-        public NamedStream Output
+        protected override void WriteToStream(Stream outputStream)
         {
-            get
-            {
-                if (_output == null)
-                {
-                    _output = new NamedStream();
-                    _output.Name = OutputName;
-                    _output.Content = new MemoryStream();
-                    WriteToStream();
-                    _output.Content.Position = 0;
-                }
-
-                return _output;
-            }
-        }
-
-        private void WriteToStream()
-        {
-            using (ZipArchive archive = new ZipArchive(_output.Content, ZipArchiveMode.Create, true))
+            using (ZipArchive archive = new ZipArchive(outputStream, ZipArchiveMode.Create, true))
             {
                 foreach (NamedStream source in Sources)
                 {

@@ -9,7 +9,7 @@ using ClosedXML.Excel;
 
 namespace Betlln.Data.Integration.Office
 {
-    public class ExcelWorkbookTransformation
+    public class ExcelWorkbookTransformation : Transformation
     {
         public ExcelWorkbookTransformation()
         {
@@ -20,7 +20,7 @@ namespace Betlln.Data.Integration.Office
         public List<ExcelSheetTransformation> Sheets { get; }
 
         private string _outputName;
-        public string OutputName
+        public override string OutputName
         {
             get
             {
@@ -47,25 +47,7 @@ namespace Betlln.Data.Integration.Office
             }
         }
 
-        private NamedStream _output;
-        public NamedStream Output
-        {
-            get
-            {
-                if (_output == null)
-                {
-                    _output = new NamedStream();
-                    _output.Name = OutputName;
-                    _output.Content = new MemoryStream();
-                    WriteWorkbookToStream();
-                    _output.Content.Position = 0;
-                }
-
-                return _output;
-            }
-        }
-
-        private void WriteWorkbookToStream()
+        protected override void WriteToStream(Stream outputStream)
         {
             using (XLWorkbook workbook = new XLWorkbook())
             {
@@ -80,7 +62,7 @@ namespace Betlln.Data.Integration.Office
 
                 if (workbook.Worksheets.Any())
                 {
-                    workbook.SaveAs(_output.Content);
+                    workbook.SaveAs(outputStream);
                 }
             }
         }

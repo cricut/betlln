@@ -97,6 +97,7 @@
     <Compile Include="Core\NamedStream.cs" />
     <Compile Include="Core\TransformationKind.cs" />
     <Compile Include="FileSystem\CompressedFileTransformation.cs" />
+    <Compile Include="Core\Transformation.cs" />
     <Compile Include="Mail\EmailConnectionManager.cs" />
     <Compile Include="FileSystem\CompressFolderTask.cs" />
     <Compile Include="Json\JsonDocumentCollection.cs" />
