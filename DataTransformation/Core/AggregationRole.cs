@@ -1,6 +1,6 @@
 ﻿namespace Betlln.Data.Integration.Core
 {
-    public enum TransformationKind
+    public enum AggregationRole
     {
         None,
         GroupingKey,

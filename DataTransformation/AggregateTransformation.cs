@@ -20,20 +20,20 @@ namespace Betlln.Data.Integration
 
         public void AddGroupingColumn(string sourceColumnName, string outputColumnName = null)
         {
-            _columns.Add(new DataElementPairing(sourceColumnName, outputColumnName ?? sourceColumnName, TransformationKind.GroupingKey));
+            _columns.Add(new DataElementPairing(sourceColumnName, outputColumnName ?? sourceColumnName, AggregationRole.GroupingKey));
         }
 
         public void AddSumColumn(string sourceColumnName, string outputColumnName = null)
         {
-            _columns.Add(new DataElementPairing(sourceColumnName, outputColumnName ?? sourceColumnName, TransformationKind.Sum));
+            _columns.Add(new DataElementPairing(sourceColumnName, outputColumnName ?? sourceColumnName, AggregationRole.Sum));
         }
 
         protected override IDataRecordIterator CreateReader()
         {
             List<DataRecord> aggregatedRecords = new List<DataRecord>();
             
-            List<DataElementPairing> dimensionColumns = _columns.Where(columnInfo => columnInfo.Transform == TransformationKind.GroupingKey).ToList();
-            List<DataElementPairing> factColumns = _columns.Where(columnInfo => columnInfo.Transform != TransformationKind.GroupingKey).ToList();
+            List<DataElementPairing> dimensionColumns = _columns.Where(columnInfo => columnInfo.AggregationRole == AggregationRole.GroupingKey).ToList();
+            List<DataElementPairing> factColumns = _columns.Where(columnInfo => columnInfo.AggregationRole != AggregationRole.GroupingKey).ToList();
 
             using (IDataRecordIterator source = DataSource.GetReader())
             {
@@ -66,7 +66,7 @@ namespace Betlln.Data.Integration
 
                     foreach (DataElementPairing column in factColumns)
                     {
-                        if (column.Transform == TransformationKind.Sum)
+                        if (column.AggregationRole == AggregationRole.Sum)
                         {
                             decimal? currentValue = (decimal?) dataRecord[column.DestinationName];
                             decimal valueToAdd = Convert.ToDecimal(sourceRecord[column.SourceName]);

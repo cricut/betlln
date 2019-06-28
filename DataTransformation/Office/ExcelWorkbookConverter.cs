@@ -9,15 +9,15 @@ using ClosedXML.Excel;
 
 namespace Betlln.Data.Integration.Office
 {
-    public class ExcelWorkbookTransformation : Transformation
+    public class ExcelWorkbookConverter : StreamConverter
     {
-        internal ExcelWorkbookTransformation()
+        internal ExcelWorkbookConverter()
         {
-            Sheets = new List<ExcelSheetTransformation>();
+            Sheets = new List<ExcelSheetDirective>();
             Dts.Notify.Log($"Started {GetType().Name}", LogEventType.Debug);
         }
 
-        public List<ExcelSheetTransformation> Sheets { get; }
+        public List<ExcelSheetDirective> Sheets { get; }
 
         private string _outputName;
         public override string OutputName
@@ -51,7 +51,7 @@ namespace Betlln.Data.Integration.Office
         {
             using (XLWorkbook workbook = new XLWorkbook())
             {
-                foreach (ExcelSheetTransformation sheet in Sheets)
+                foreach (ExcelSheetDirective sheet in Sheets)
                 {
                     DataTable dataTable = sheet.DataSource.GetResults();
                     if (ShouldWriteToSheet(sheet, dataTable))
@@ -67,7 +67,7 @@ namespace Betlln.Data.Integration.Office
             }
         }
 
-        private bool ShouldWriteToSheet(ExcelSheetTransformation sheet, DataTable dataTable)
+        private bool ShouldWriteToSheet(ExcelSheetDirective sheet, DataTable dataTable)
         {
             if (dataTable.Columns.Count == 0)
             {
@@ -82,7 +82,7 @@ namespace Betlln.Data.Integration.Office
             return true;
         }
 
-        private void WriteToSheet(XLWorkbook workbook, ExcelSheetTransformation sheetInfo, DataTable dataTable)
+        private void WriteToSheet(XLWorkbook workbook, ExcelSheetDirective sheetInfo, DataTable dataTable)
         {
             using (IXLWorksheet worksheet = workbook.Worksheets.Add(sheetInfo.DestinationSheetName))
             {
@@ -90,7 +90,7 @@ namespace Betlln.Data.Integration.Office
             }
         }
 
-        private void CreateFormattedTable(ExcelSheetTransformation sheetInfo, IXLWorksheet worksheet, DataTable dataTable)
+        private void CreateFormattedTable(ExcelSheetDirective sheetInfo, IXLWorksheet worksheet, DataTable dataTable)
         {
             IXLCell topLeftCell = worksheet.Cell(1, 1);
 

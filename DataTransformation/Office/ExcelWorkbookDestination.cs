@@ -6,27 +6,27 @@ namespace Betlln.Data.Integration.Office
 {
     public class ExcelWorkbookDestination : Task
     {
-        private readonly ExcelWorkbookTransformation _baseTransformation;
+        private readonly ExcelWorkbookConverter _baseConverter;
 
         internal ExcelWorkbookDestination()
         {
-            _baseTransformation = new ExcelWorkbookTransformation();
+            _baseConverter = new ExcelWorkbookConverter();
         }
 
-        public List<ExcelSheetTransformation> Sheets
+        public List<ExcelSheetDirective> Sheets
         {
-            get { return _baseTransformation.Sheets; }
+            get { return _baseConverter.Sheets; }
         }
 
         public string OutputFileName
         {
-            get { return _baseTransformation.OutputName; }
-            set { _baseTransformation.OutputName = value; }
+            get { return _baseConverter.OutputName; }
+            set { _baseConverter.OutputName = value; }
         }
 
         protected override void ExecuteTasks()
         {
-            using (Stream contentStream = _baseTransformation.Output.Content)
+            using (Stream contentStream = _baseConverter.Output.Content)
             {
                 if (contentStream.Length > 0)
                 {

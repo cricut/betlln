@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Betlln.Data.Integration.Core
 {
-    public abstract class Transformation : IDisposable
+    public abstract class StreamConverter : IDisposable
     {
         public virtual string OutputName { get; set; }
 

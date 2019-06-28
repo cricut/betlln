@@ -4,11 +4,11 @@ using Betlln.Logging;
 
 namespace Betlln.Data.Integration.Office
 {
-    public class ExcelSheetTransformation
+    public class ExcelSheetDirective
     {
         private readonly Dictionary<string, ExcelColumn> _columnSettings;
 
-        public ExcelSheetTransformation()
+        public ExcelSheetDirective()
         {
             _columnSettings = new Dictionary<string, ExcelColumn>();
             WriteEmptyTable = true;

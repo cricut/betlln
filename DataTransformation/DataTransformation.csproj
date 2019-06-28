@@ -95,9 +95,9 @@
     <Compile Include="AsyncFeed.cs" />
     <Compile Include="ConditionalSplit.cs" />
     <Compile Include="Core\NamedStream.cs" />
-    <Compile Include="Core\TransformationKind.cs" />
-    <Compile Include="FileSystem\CompressedFileTransformation.cs" />
-    <Compile Include="Core\Transformation.cs" />
+    <Compile Include="Core\AggregationRole.cs" />
+    <Compile Include="FileSystem\CompressedFileConverter.cs" />
+    <Compile Include="Core\StreamConverter.cs" />
     <Compile Include="Mail\EmailConnectionManager.cs" />
     <Compile Include="FileSystem\CompressFolderTask.cs" />
     <Compile Include="Json\JsonDocumentCollection.cs" />
@@ -122,8 +122,8 @@
     <Compile Include="Office\ExcelColumn.cs" />
     <Compile Include="Office\ExcelWorkbookDestination.cs" />
     <Compile Include="Mail\SendEmailTask.cs" />
-    <Compile Include="Office\ExcelSheetTransformation.cs" />
-    <Compile Include="Office\ExcelWorkbookTransformation.cs" />
+    <Compile Include="Office\ExcelSheetDirective.cs" />
+    <Compile Include="Office\ExcelWorkbookConverter.cs" />
     <Compile Include="SqlServer\MultiExecuteSqlTask.cs" />
     <Compile Include="SqlServer\RecordReader.cs" />
     <Compile Include="SqlServer\TableMetaDataCache.cs" />

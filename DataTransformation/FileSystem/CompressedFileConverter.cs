@@ -5,9 +5,9 @@ using Betlln.Data.Integration.Core;
 
 namespace Betlln.Data.Integration.FileSystem
 {
-    public class CompressedFileTransformation : Transformation
+    public class CompressedFileConverter : StreamConverter
     {
-        internal CompressedFileTransformation()
+        internal CompressedFileConverter()
         {
             BufferSize = ExtensionMethods.DefaultBufferSize;
             Sources = new List<NamedStream>();
