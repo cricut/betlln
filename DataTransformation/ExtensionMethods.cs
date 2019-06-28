@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
 using Betlln.Data.Integration.Collections;
 
@@ -96,17 +95,6 @@ namespace Betlln.Data.Integration
                 columnNames.Add(column.ColumnName);
             }
             return columnNames;
-        }
-
-        public static void WriteStream(this Stream destinationStream, Stream sourceStream, int bufferSize = DefaultBufferSize)
-        {
-            int? bytesRead = null;
-            while (!bytesRead.HasValue || bytesRead == bufferSize)
-            {
-                byte[] buffer = new byte[bufferSize];
-                bytesRead = sourceStream.Read(buffer, 0, bufferSize);
-                destinationStream.Write(buffer, 0, bytesRead.Value);
-            }
         }
     }
 }

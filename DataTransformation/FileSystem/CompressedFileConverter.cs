@@ -29,7 +29,7 @@ namespace Betlln.Data.Integration.FileSystem
                             ZipArchiveEntry entry = archive.CreateEntry(source.Name);
                             using (Stream entryWriter = entry.Open())
                             {
-                                entryWriter.WriteStream(sourceStream, BufferSize);
+                                sourceStream.CopyTo(entryWriter);
                             }
                         }
                     }

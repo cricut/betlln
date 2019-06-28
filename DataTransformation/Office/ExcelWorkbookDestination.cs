@@ -32,7 +32,7 @@ namespace Betlln.Data.Integration.Office
                 {
                     using (FileStream fileStream = OpenDestinationFile())
                     {
-                        fileStream.WriteStream(contentStream);
+                        contentStream.CopyTo(fileStream);
                     }
                 }
             }
