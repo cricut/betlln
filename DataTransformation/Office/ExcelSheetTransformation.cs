@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Betlln.Data.Integration.Core;
+using Betlln.Logging;
 
 namespace Betlln.Data.Integration.Office
 {
@@ -11,6 +12,7 @@ namespace Betlln.Data.Integration.Office
         {
             _columnSettings = new Dictionary<string, ExcelColumn>();
             WriteEmptyTable = true;
+            Dts.Notify.Log($"Started {GetType().Name}", LogEventType.Debug);
         }
 
         public DataFeed DataSource { get; set; }

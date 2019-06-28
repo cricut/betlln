@@ -28,18 +28,19 @@ namespace Betlln.Data.Integration.Office
         {
             using (Stream contentStream = _baseTransformation.Output.Content)
             {
-                using (FileStream fileStream = System.IO.File.Open(OutputFileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
+                if (contentStream.Length > 0)
                 {
-                    const int bufferSize = 8192;
-                    int? bytesRead = null;
-                    while (!bytesRead.HasValue || bytesRead == bufferSize)
+                    using (FileStream fileStream = OpenDestinationFile())
                     {
-                        byte[] buffer = new byte[bufferSize];
-                        bytesRead = contentStream.Read(buffer, 0, bufferSize);
-                        fileStream.Write(buffer, 0, bufferSize);
+                        fileStream.WriteStream(contentStream);
                     }
                 }
             }
+        }
+
+        private FileStream OpenDestinationFile()
+        {
+            return System.IO.File.Open(OutputFileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
         }
     }
 }

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using Betlln.Data.Integration.Core;
+using Betlln.Logging;
 using ClosedXML.Excel;
 
 namespace Betlln.Data.Integration.Office
@@ -12,6 +14,7 @@ namespace Betlln.Data.Integration.Office
         public ExcelWorkbookTransformation()
         {
             Sheets = new List<ExcelSheetTransformation>();
+            Dts.Notify.Log($"Started {GetType().Name}", LogEventType.Debug);
         }
 
         public List<ExcelSheetTransformation> Sheets { get; }
@@ -54,25 +57,31 @@ namespace Betlln.Data.Integration.Office
                     _output = new NamedStream();
                     _output.Name = OutputName;
                     _output.Content = new MemoryStream();
-
-                    using (XLWorkbook workbook = new XLWorkbook())
-                    {
-                        foreach (ExcelSheetTransformation sheet in Sheets)
-                        {
-                            DataTable dataTable = sheet.DataSource.GetResults();
-                            if (ShouldWriteToSheet(sheet, dataTable))
-                            {
-                                WriteToSheet(workbook, sheet, dataTable);
-                            }
-                        }
-
-                        workbook.SaveAs(_output.Content);
-                    }
-
+                    WriteWorkbookToStream();
                     _output.Content.Position = 0;
                 }
 
                 return _output;
+            }
+        }
+
+        private void WriteWorkbookToStream()
+        {
+            using (XLWorkbook workbook = new XLWorkbook())
+            {
+                foreach (ExcelSheetTransformation sheet in Sheets)
+                {
+                    DataTable dataTable = sheet.DataSource.GetResults();
+                    if (ShouldWriteToSheet(sheet, dataTable))
+                    {
+                        WriteToSheet(workbook, sheet, dataTable);
+                    }
+                }
+
+                if (workbook.Worksheets.Any())
+                {
+                    workbook.SaveAs(_output.Content);
+                }
             }
         }
 

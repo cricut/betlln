@@ -9,7 +9,7 @@ namespace Betlln.Data.Integration.FileSystem
     {
         internal CompressedFileDestination()
         {
-            BufferSize = 8192;
+            BufferSize = ExtensionMethods.DefaultBufferSize;
             Sources = new List<NamedStream>();
         }
 
@@ -25,15 +25,13 @@ namespace Betlln.Data.Integration.FileSystem
                 {
                     foreach (NamedStream source in Sources)
                     {
-                        ZipArchiveEntry entry = archive.CreateEntry(source.Name);
-                        using (Stream entryWriter = entry.Open())
+                        Stream sourceStream = source.Content;
+                        if (sourceStream.Length > 0)
                         {
-                            int? bytesRead = null;
-                            while (!bytesRead.HasValue || bytesRead == BufferSize)
+                            ZipArchiveEntry entry = archive.CreateEntry(source.Name);
+                            using (Stream entryWriter = entry.Open())
                             {
-                                byte[] buffer = new byte[BufferSize];
-                                bytesRead = source.Content.Read(buffer, 0, BufferSize);
-                                entryWriter.Write(buffer, 0, BufferSize);
+                                entryWriter.WriteStream(sourceStream, BufferSize);
                             }
                         }
                     }
