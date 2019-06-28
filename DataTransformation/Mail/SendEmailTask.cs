@@ -10,10 +10,12 @@ namespace Betlln.Data.Integration.Mail
     public class SendEmailTask : Task
     {
         private readonly List<string> _filesToAttach;
+        private readonly List<NamedStream> _otherAttachments;
 
         internal SendEmailTask()
         {
             _filesToAttach = new List<string>();
+            _otherAttachments = new List<NamedStream>();
         }
 
         public string To { get; set; }
@@ -24,6 +26,11 @@ namespace Betlln.Data.Integration.Mail
         public void AddAttachment(string filePath)
         {
             _filesToAttach.Add(filePath);
+        }
+
+        public void AddAttachment(NamedStream namedStream)
+        {
+            _otherAttachments.Add(namedStream);
         }
 
         public IConnectionManager Connection { get; set; }
@@ -64,6 +71,11 @@ namespace Betlln.Data.Integration.Mail
                     string fileName = Path.GetFileName(fileToAttach);
                     bodyBuilder.Attachments.Add(fileName, contentStream);
                 }
+            }
+
+            foreach (NamedStream attachmentSource in _otherAttachments)
+            {
+                bodyBuilder.Attachments.Add(attachmentSource.Name, attachmentSource.Content);
             }
 
             message.Body = bodyBuilder.ToMessageBody();

@@ -96,7 +96,7 @@
     <Compile Include="ConditionalSplit.cs" />
     <Compile Include="Core\NamedStream.cs" />
     <Compile Include="Core\TransformationKind.cs" />
-    <Compile Include="FileSystem\CompressedFileDestination.cs" />
+    <Compile Include="FileSystem\CompressedFileTransformation.cs" />
     <Compile Include="Mail\EmailConnectionManager.cs" />
     <Compile Include="FileSystem\CompressFolderTask.cs" />
     <Compile Include="Json\JsonDocumentCollection.cs" />

@@ -5,9 +5,9 @@ using Betlln.Data.Integration.Core;
 
 namespace Betlln.Data.Integration.FileSystem
 {
-    public class CompressedFileDestination : Task
+    public class CompressedFileTransformation
     {
-        internal CompressedFileDestination()
+        public CompressedFileTransformation()
         {
             BufferSize = ExtensionMethods.DefaultBufferSize;
             Sources = new List<NamedStream>();
@@ -15,17 +15,34 @@ namespace Betlln.Data.Integration.FileSystem
 
         public List<NamedStream> Sources { get; }
         public int BufferSize { get; set; }
-        public string OutputPath { get; set; }
+        public string OutputName { get; set; }
 
-        protected override void ExecuteTasks()
+        private NamedStream _output;
+        public NamedStream Output
         {
-            using (Stream outputStream = System.IO.File.Open(OutputPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            get
             {
-                using (ZipArchive archive = new ZipArchive(outputStream, ZipArchiveMode.Create))
+                if (_output == null)
                 {
-                    foreach (NamedStream source in Sources)
+                    _output = new NamedStream();
+                    _output.Name = OutputName;
+                    _output.Content = new MemoryStream();
+                    WriteToStream();
+                    _output.Content.Position = 0;
+                }
+
+                return _output;
+            }
+        }
+
+        private void WriteToStream()
+        {
+            using (ZipArchive archive = new ZipArchive(_output.Content, ZipArchiveMode.Create, true))
+            {
+                foreach (NamedStream source in Sources)
+                {
+                    using (Stream sourceStream = source.Content)
                     {
-                        Stream sourceStream = source.Content;
                         if (sourceStream.Length > 0)
                         {
                             ZipArchiveEntry entry = archive.CreateEntry(source.Name);
