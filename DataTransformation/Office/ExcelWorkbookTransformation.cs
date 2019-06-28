@@ -11,7 +11,7 @@ namespace Betlln.Data.Integration.Office
 {
     public class ExcelWorkbookTransformation : Transformation
     {
-        public ExcelWorkbookTransformation()
+        internal ExcelWorkbookTransformation()
         {
             Sheets = new List<ExcelSheetTransformation>();
             Dts.Notify.Log($"Started {GetType().Name}", LogEventType.Debug);

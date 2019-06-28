@@ -7,7 +7,7 @@ namespace Betlln.Data.Integration.FileSystem
 {
     public class CompressedFileTransformation : Transformation
     {
-        public CompressedFileTransformation()
+        internal CompressedFileTransformation()
         {
             BufferSize = ExtensionMethods.DefaultBufferSize;
             Sources = new List<NamedStream>();
