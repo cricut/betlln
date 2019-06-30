@@ -1,15 +1,18 @@
 ﻿using System;
 using Betlln.Data.Integration.Core;
+using Betlln.Mail;
 
 namespace Betlln.Data.Integration.Mail
 {
-    public class EmailConnectionManager : IConnectionManager
+    public class EmailConnectionManager : IConnectionManager, IEmailPorts
     {
         public EmailConnectionManager()
         {
+            ImapPortNumber = MailClient.DefaultImapPort;
+            SmtpPortNumber = MailClient.DefaultSmtpPort;
         }
 
-        public EmailConnectionManager(ConnectionInfo connectionInfo)
+        public EmailConnectionManager(ConnectionInfo connectionInfo) : this()
         {
             Host = connectionInfo.Destination;
             User = connectionInfo.User;
@@ -19,10 +22,15 @@ namespace Betlln.Data.Integration.Mail
         public string Host { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
+        public int ImapPortNumber { get; set; }
+        public int SmtpPortNumber { get; set; }
 
         public IDisposable GetConnection()
         {
-            return new EmailHostInfo(Host, User, Password);
+            EmailHostInfo emailHostInfo = new EmailHostInfo(Host, User, Password);
+            emailHostInfo.ImapPortNumber = ImapPortNumber;
+            emailHostInfo.SmtpPortNumber = SmtpPortNumber;
+            return emailHostInfo;
         }
     }
 }

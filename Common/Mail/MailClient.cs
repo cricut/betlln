@@ -7,17 +7,24 @@ using MimeKit;
 
 namespace Betlln.Mail
 {
-    public class MailClient : IMailClient
+    public class MailClient : IMailClient, IEmailPorts
     {
+        public const int DefaultSmtpPort = 587;
+        public const int DefaultImapPort = 993;
+
         private IMailClient _client;
 
         private string Address { get; set; }
+        public int ImapPortNumber { get; set; }
+        public int SmtpPortNumber { get; set; }
         private string UserName { get; set; }
         private string Password { get; set; }
 
-        public void Connect(string address)
+        public void Connect(string address, int imapPortNumber = DefaultImapPort, int smtpPortNumber = DefaultSmtpPort)
         {
             Address = address;
+            ImapPortNumber = imapPortNumber;
+            SmtpPortNumber = smtpPortNumber;
         }
 
         public void Login(string username, string password)
@@ -55,7 +62,7 @@ namespace Betlln.Mail
         private void PrepareClient<T>() where T : IMailClient, new()
         {
             _client = new T();
-            _client.Connect(Address);
+            _client.Connect(Address, ImapPortNumber, SmtpPortNumber);
             _client.Login(UserName, Password);
         }
 
@@ -63,16 +70,6 @@ namespace Betlln.Mail
         {
             _client?.Dispose();
             _client = null;
-        }
-
-        public static void Send(string address, string username, string password, MimeMessage message)
-        {
-            using (IMailClient client = new MailClient())
-            {
-                client.Connect(address);
-                client.Login(username, password);
-                client.Send(message);
-            }
         }
 
         private class ImapMailClient : IMailClient
@@ -84,9 +81,9 @@ namespace Betlln.Mail
                 _imapClient = new ImapClient();
             }
 
-            public void Connect(string address)
+            public void Connect(string address, int imapPortNumber = DefaultImapPort, int smtpPortNumber = DefaultSmtpPort)
             {
-                _imapClient.Connect(address, 993, true);
+                _imapClient.Connect(address, imapPortNumber, true);
             }
 
             public void Login(string username, string password)
@@ -121,9 +118,9 @@ namespace Betlln.Mail
                 _smtpClient = new SmtpClient();
             }
 
-            public void Connect(string address)
+            public void Connect(string address, int imapPortNumber = DefaultImapPort, int smtpPortNumber = DefaultSmtpPort)
             {
-                _smtpClient.Connect(address, 587, SecureSocketOptions.StartTls);
+                _smtpClient.Connect(address, smtpPortNumber, SecureSocketOptions.StartTls);
             }
 
             public void Login(string username, string password)

@@ -59,6 +59,7 @@
     <Compile Include="Logging\DatabaseLogger.cs" />
     <Compile Include="Logging\LogEntry.cs" />
     <Compile Include="Logging\LogEventType.cs" />
+    <Compile Include="Mail\IEmailPorts.cs" />
     <Compile Include="Mail\IMailClient.cs" />
     <Compile Include="Mail\MailClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

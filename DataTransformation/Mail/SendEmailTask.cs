@@ -50,7 +50,7 @@ namespace Betlln.Data.Integration.Mail
             SendEmail(emailHostInfo);
         }
 
-        private void SendEmail(ConnectionInfo credentials)
+        private void SendEmail(EmailHostInfo credentials)
         {
             MimeMessage message = new MimeMessage();
             message.Subject = Subject;
@@ -83,7 +83,17 @@ namespace Betlln.Data.Integration.Mail
             string displayName = !string.IsNullOrWhiteSpace(SenderDisplayName) ? SenderDisplayName : credentials.User;
             message.From.Add(new MailboxAddress(credentials.User) {Name = displayName});
 
-            MailClient.Send(credentials.Destination, credentials.User, credentials.Password, message);
+            SendMessage(credentials, message);
+        }
+
+        private static void SendMessage(EmailHostInfo credentials, MimeMessage message)
+        {
+            using (IMailClient client = new MailClient())
+            {
+                client.Connect(credentials.Destination, credentials.ImapPortNumber, credentials.SmtpPortNumber);
+                client.Login(credentials.User, credentials.Password);
+                client.Send(message);
+            }
         }
 
         public static SendEmailTask GetUnattachedComponent()
