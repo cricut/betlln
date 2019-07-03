@@ -1,9 +1,16 @@
-﻿namespace Betlln.Data.File
+﻿using System;
+
+namespace Betlln.Data.File
 {
     public class FileAdapterFactory : IFileAdapterFactory
     {
         public IDataFileAdapter GetFileAdapter(string filePath, bool useCached)
         {
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                throw new ArgumentNullException(nameof(filePath));
+            }
+
             IDataFileAdapter baseAdapter;
 
             string fileExtension = SystemExtensions.GetFileExtension(filePath);
