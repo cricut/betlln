@@ -39,20 +39,7 @@ namespace Betlln.Data.Integration
             {
                 foreach(DataRecord sourceRecord in source)
                 {
-                    DataRecord dataRecord = aggregatedRecords.Find(resultRecord => 
-                    {
-                        foreach (DataElementPairing dimensionColumn in dimensionColumns)
-                        {
-                            object expectedValue = resultRecord[dimensionColumn.DestinationName];
-                            object actualValue = sourceRecord[dimensionColumn.SourceName];
-                            if (!Equals(expectedValue, actualValue))
-                            {
-                                return false;
-                            }
-                        }
-
-                        return true;
-                    });
+                    DataRecord dataRecord = FindMatchingAggregateRecord(aggregatedRecords, sourceRecord, dimensionColumns);
 
                     if (dataRecord == null)
                     {
@@ -78,6 +65,29 @@ namespace Betlln.Data.Integration
             }
 
             return new RecordListIterator(aggregatedRecords);
+        }
+
+        private static DataRecord FindMatchingAggregateRecord(List<DataRecord> aggregatedRecords, DataRecord sourceRecord, List<DataElementPairing> dimensionColumns)
+        {
+            return aggregatedRecords.Find(aggregateRecord => RecordsMatchOnAllDimensions(aggregateRecord, sourceRecord, dimensionColumns));
+        }
+
+        private static bool RecordsMatchOnAllDimensions(DataRecord recordA, DataRecord recordB, IEnumerable<DataElementPairing> dimensionColumns)
+        {
+            foreach (DataElementPairing dimensionColumn in dimensionColumns)
+            {
+                if (!RecordsMatchOnDimensionColumn(recordA, recordB, dimensionColumn))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool RecordsMatchOnDimensionColumn(DataRecord recordA, DataRecord recordB, DataElementPairing dimensionColumn)
+        {
+            return Equals(recordA[dimensionColumn.DestinationName], recordB[dimensionColumn.SourceName]);
         }
 
         private class RecordListIterator : IDataRecordIterator
