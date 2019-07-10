@@ -37,8 +37,23 @@
     <Reference Include="AWSSDK.S3, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\AWSSDK.S3.3.3.101.11\lib\net45\AWSSDK.S3.dll</HintPath>
     </Reference>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.5.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>$(SolutionDir)\packages\BouncyCastle.1.8.5\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="ClosedXML, Version=0.87.0.0, Culture=neutral, PublicKeyToken=fd1eb21b62ae805b, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\ClosedXML.0.87.1\lib\net40\ClosedXML.dll</HintPath>
+    </Reference>
     <Reference Include="DnsClient, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\DnsClient.1.2.0\lib\net45\DnsClient.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.9.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\DocumentFormat.OpenXml.2.9.1\lib\net40\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="MailKit, Version=2.2.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\MailKit.2.2.0\lib\net45\MailKit.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit, Version=2.2.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\MimeKit.2.2.0\lib\net45\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="MongoDB.Bson, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\MongoDB.Bson.2.7.2\lib\net45\MongoDB.Bson.dll</HintPath>
@@ -60,15 +75,31 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AggregateTransformation.cs" />
     <Compile Include="AWS\DownloadS3FolderTask.cs" />
     <Compile Include="AWS\IS3Client.cs" />
     <Compile Include="AWS\IS3FolderSource.cs" />
+    <Compile Include="AsyncFeed.cs" />
+    <Compile Include="ConditionalSplit.cs" />
+    <Compile Include="Core\NamedStream.cs" />
+    <Compile Include="Core\AggregationRole.cs" />
+    <Compile Include="FileSystem\CompressedFileConverter.cs" />
+    <Compile Include="Core\StreamConverter.cs" />
+    <Compile Include="Mail\EmailConnectionManager.cs" />
+    <Compile Include="FileSystem\CompressFolderTask.cs" />
     <Compile Include="Json\JsonDocumentCollection.cs" />
     <Compile Include="Json\JsonFileDocumentCollection.cs" />
     <Compile Include="AWS\S3FileListSource.cs" />
@@ -84,8 +115,15 @@
     <Compile Include="Core\PropertyBinder.cs" />
     <Compile Include="DerivedColumnTransformation.cs" />
     <Compile Include="Disunion.cs" />
+    <Compile Include="Mail\EmailHostInfo.cs" />
     <Compile Include="MetaDataFeed.cs" />
     <Compile Include="Mongo\IMongoDB.cs" />
+    <Compile Include="Office\ExcelFormats.cs" />
+    <Compile Include="Office\ExcelColumn.cs" />
+    <Compile Include="Office\ExcelWorkbookDestination.cs" />
+    <Compile Include="Mail\SendEmailTask.cs" />
+    <Compile Include="Office\ExcelSheetDirective.cs" />
+    <Compile Include="Office\ExcelWorkbookConverter.cs" />
     <Compile Include="SqlServer\MultiExecuteSqlTask.cs" />
     <Compile Include="SqlServer\RecordReader.cs" />
     <Compile Include="SqlServer\TableMetaDataCache.cs" />

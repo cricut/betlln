@@ -3,45 +3,107 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using Betlln.Data.Integration.Core;
 using DataTable = System.Data.DataTable;
 
 namespace Betlln.Data.Integration.SqlServer
 {
-    public class SqlDataSource : DataSource, ISqlActivity
+    public class SqlDataSource : DataSource, ISqlActivity, IColumnMapper
     {
+        private CommandType _commandType;
+        private string _commandText;
+        private readonly List<DataElementPairing> _columnMappings;
+
         internal SqlDataSource()
         {
             Parameters = new ParameterSet();
+            _columnMappings = new List<DataElementPairing>();
         }
 
-        public string CommandText { get; set; }
+        public string CommandText
+        {
+            get
+            {
+                return _commandText;
+            }
+            set
+            {
+                _commandType = CommandType.Text;
+                _commandText = value;
+            }
+        }
+
+        public string ProcedureName
+        {
+            get
+            {
+                return _commandText;
+            }
+            set
+            {
+                _commandType = CommandType.StoredProcedure;
+                _commandText = value;
+            }
+        }
+
         public ParameterSet Parameters { get; }
         public uint Timeout { get; set; }
 
+        public void MapColumns<T>(string sourceName, string outputAlias)
+        {
+            _columnMappings.Add(new DataElementPairing(sourceName, outputAlias, typeof(T)));
+        }
+
         public override DataTable GetResults()
         {
-            return this.Execute(CommandText, CommandType.Text, SqlActivityExtensionMethods.GetDataTable);
+            DataTable rawDataTable = this.Execute(_commandText, _commandType, SqlActivityExtensionMethods.GetDataTable);
+            if (_columnMappings.Any())
+            {
+                return rawDataTable.RepackageTable(_columnMappings);
+            }
+            return rawDataTable;
         }
 
         public override T GetScalar<T>()
         {
-            return (T) this.Execute(CommandText, CommandType.Text, x => x.ExecuteScalar());
+            if (_columnMappings.Any())
+            {
+                throw new InvalidOperationException();
+            }
+            return (T) this.Execute(_commandText, _commandType, x => x.ExecuteScalar());
         }
 
         protected override IDataRecordIterator CreateReader()
         {
-            SqlDataReader reader = this.Execute(CommandText, CommandType.Text, x => x.ExecuteReader());
-            return new SqlRecordIterator(reader);
+            return new SqlRecordIterator(this, _commandText, _commandType, _columnMappings);
         }
 
         private class SqlRecordIterator : IDataRecordIterator
         {
-            private readonly SqlDataReader _reader;
+            private readonly ResourceStack _sqlPipeline;
+            private readonly List<DataElementPairing> _columnNameMappings;
+            private readonly Dictionary<int, DataElementPairing> _fieldMappings;
 
-            public SqlRecordIterator(SqlDataReader reader)
+            public SqlRecordIterator(ISqlActivity sqlSettings, string commandText, CommandType commandType, List<DataElementPairing> columnNameMappings)
             {
-                _reader = reader;
+                _sqlPipeline = new ResourceStack();
+                _columnNameMappings = columnNameMappings;
+                _fieldMappings = new Dictionary<int, DataElementPairing>();
+
+                SqlConnection connection = sqlSettings.GetConnection();
+                _sqlPipeline.Push(connection);
+
+                SqlCommand command = sqlSettings.BuildCommand(connection, commandText, commandType);
+                _sqlPipeline.Push(command);
+
+                SqlDataReader reader = command.ExecuteReader();
+                _sqlPipeline.Push(reader);
+            }
+
+            private SqlDataReader Reader
+            {
+                get { return (SqlDataReader) _sqlPipeline.Tip; }
             }
 
             public IEnumerator<DataRecord> GetEnumerator()
@@ -56,13 +118,12 @@ namespace Betlln.Data.Integration.SqlServer
 
             public bool MoveNext()
             {
-                if (_reader.Read())
+                if (Reader.Read())
                 {
                     DataRecord record = new DataRecord();
-                    for (int i = 0; i < _reader.FieldCount; i++)
+                    for (int i = 0; i < Reader.FieldCount; i++)
                     {
-                        string name = _reader.GetName(i);
-                        record[name] = _reader[i];
+                        PopulateRecordFromField(record, i);
                     }
                     Current = record;
                     return true;
@@ -71,6 +132,62 @@ namespace Betlln.Data.Integration.SqlServer
                 {
                     Current = null;
                     return false;
+                }
+            }
+
+            private void PopulateRecordFromField(DataRecord record, int fieldIndex)
+            {
+                if (_columnNameMappings.Any())
+                {
+                    if (_fieldMappings.ContainsKey(fieldIndex))
+                    {
+                        PopulateRecordFromKnownField(record, fieldIndex);
+                    }
+                    else
+                    {
+                        PopulateRecordFromUnknownField(record, fieldIndex);
+                    }
+                }
+                else
+                {
+                    string fieldName = Reader.GetName(fieldIndex);
+                    record[fieldName] = Reader[fieldIndex];
+                }
+            }
+
+            private void PopulateRecordFromKnownField(DataRecord record, int fieldIndex)
+            {
+                DataElementPairing pairing = _fieldMappings[fieldIndex];
+                if (pairing != null)
+                {
+                    record[pairing.DestinationName] = Reader[fieldIndex];
+                }
+            }
+
+            private void PopulateRecordFromUnknownField(DataRecord record, int fieldIndex)
+            {
+                string fieldName = Reader.GetName(fieldIndex);
+
+                DataElementPairing pairing =
+                    _columnNameMappings.Find(x => fieldName.Equals(x.SourceName, StringComparison.InvariantCultureIgnoreCase));
+                if (pairing != null)
+                {
+                    object rawValue = Reader[fieldIndex];
+
+                    if (rawValue != null && rawValue != DBNull.Value)
+                    {
+                        _fieldMappings.Add(fieldIndex, pairing);
+                        if (pairing.ElementType != rawValue.GetType())
+                        {
+                            throw new InvalidCastException();
+                        }
+                    }
+
+                    record[pairing.DestinationName] = rawValue;
+                }
+                else
+                {
+                    _fieldMappings.Add(fieldIndex, null);
                 }
             }
 
@@ -84,7 +201,7 @@ namespace Betlln.Data.Integration.SqlServer
 
             public void Dispose()
             {
-                _reader.Dispose();
+                _sqlPipeline.Dispose();
             }
         }
     }

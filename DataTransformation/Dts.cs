@@ -18,7 +18,6 @@ namespace Betlln.Data.Integration
         public static void Start()
         {
             Console.CancelKeyPress += OnCancelKeyPress;
-            AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
             SystemEvents.SessionEnding += OnWindowsLogout;
 
             try
@@ -47,12 +46,6 @@ namespace Betlln.Data.Integration
         {
             Debug.Print("Cancel key-press detected.");
             eventDetails.Cancel = true;
-            CancelRun();
-        }
-
-        private static void OnProcessExit(object sender, EventArgs e)
-        {
-            Notify.Log("The process is being killed, attempting to cancel operations.");
             CancelRun();
         }
 
@@ -96,7 +89,7 @@ namespace Betlln.Data.Integration
                 }
                 else if (valueName.Equals("--logger", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    string[] settingParts = valueName.Split("::".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                    string[] settingParts = value.Split("::".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                     string connectionName = settingParts.FirstOrDefault();
                     string subTarget = settingParts.Length == 2 ? settingParts[1] : null;
 

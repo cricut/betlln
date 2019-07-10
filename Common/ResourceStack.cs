@@ -48,7 +48,8 @@ namespace Betlln
 
             if (exceptions.Any())
             {
-                throw new ObjectDisposedException(string.Join(Environment.NewLine, exceptions));
+                AggregateException aggregateException = new AggregateException(exceptions);
+                throw new ObjectDisposedException("One or more resources could not be disposed properly.", aggregateException);
             }
         }
     }
