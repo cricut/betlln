@@ -116,6 +116,8 @@
     <Compile Include="DerivedColumnTransformation.cs" />
     <Compile Include="Disunion.cs" />
     <Compile Include="Mail\EmailHostInfo.cs" />
+    <Compile Include="Mail\EmailSender.cs" />
+    <Compile Include="Mail\IEmailSender.cs" />
     <Compile Include="MetaDataFeed.cs" />
     <Compile Include="Mongo\IMongoDB.cs" />
     <Compile Include="Office\ExcelFormats.cs" />
