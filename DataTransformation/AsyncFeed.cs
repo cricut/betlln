@@ -89,7 +89,7 @@ namespace Betlln.Data.Integration
         /// Disposes the feed
         /// </summary>
         /// <remarks>
-        /// Because <see cref="CreateReader"/> returns itself, without this empty method, disposing gets into an infinite and causes a stack overflow
+        /// Because <see cref="CreateReader"/> returns itself, any invocation of base.Dispose() will get into an infinite and cause a stack overflow
         /// </remarks>
         public override void Dispose()
         {
