@@ -53,7 +53,7 @@ namespace Betlln.Data.Integration
 
         public bool MoveNext()
         {
-            while(!_finished || _records.Count > 0)
+            while(IsOpen)
             {
                 DataRecord record;
                 if (_records.TryDequeue(out record))
@@ -72,6 +72,11 @@ namespace Betlln.Data.Integration
             return false;
         }
 
+        private bool IsOpen
+        {
+            get { return !_finished || _records.Count > 0; }
+        }
+
         public void Reset()
         {
             throw new NotSupportedException();
@@ -88,6 +93,10 @@ namespace Betlln.Data.Integration
         /// </remarks>
         public override void Dispose()
         {
+            if (IsOpen)
+            {
+                Dts.Notify.Log($"Stream {Name} was disposed with {_records.Count} still unread.", LogEventType.Warn);
+            }
         }
     }
 }
