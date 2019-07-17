@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Betlln.Data.Integration.Core
 {
@@ -84,7 +85,7 @@ namespace Betlln.Data.Integration.Core
         {
             List<ColumnInfo> columns = new List<ColumnInfo>();
 
-            foreach (KeyValuePair<string, int> mapping in _nameMap)
+            foreach (KeyValuePair<string, int> mapping in _nameMap.ToList().OrderBy(x => x.Value))
             {
                 DataElement dataElement = _elements[mapping.Value];
                 Type type = dataElement.Value == null ? typeof(string) : dataElement.Value.GetType();
