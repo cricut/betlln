@@ -1,4 +1,5 @@
-﻿using ClosedXML.Excel;
+﻿using Betlln.Data.Integration.Core;
+using ClosedXML.Excel;
 
 namespace Betlln.Data.Integration.Office
 {
@@ -11,5 +12,6 @@ namespace Betlln.Data.Integration.Office
 
         public XLAlignmentHorizontalValues HorizontalAlignment { get; set; }
         public string Format { get; set; }
+        public XLTotalsRowFunction? TotalFunction { get; set; }
     }
 }

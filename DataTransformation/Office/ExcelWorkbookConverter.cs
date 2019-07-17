@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Betlln.Data.Integration.Core;
 using Betlln.Logging;
+using Betlln.Spreadsheets;
 using ClosedXML.Excel;
 
 namespace Betlln.Data.Integration.Office
@@ -86,11 +87,24 @@ namespace Betlln.Data.Integration.Office
         {
             using (IXLWorksheet worksheet = workbook.Worksheets.Add(sheetInfo.DestinationSheetName))
             {
-                CreateFormattedTable(sheetInfo, worksheet, dataTable);
+                IXLTable table = CreateFormattedTable(sheetInfo, worksheet, dataTable);
+
+                foreach (string columnLetter in sheetInfo.CustomColumnLetters)
+                {
+                    int columnIndex = (int) (CellReference.GetColumnNumberFromLetter(columnLetter) - 1);
+                    string excelColumnName = dataTable.Columns[columnIndex].ColumnName;
+
+                    ExcelColumn columnSettings = sheetInfo.Column(columnLetter);
+                    if (columnSettings.TotalFunction.HasValue)
+                    {
+                        table.ShowTotalsRow = true;
+                        table.Field(excelColumnName).TotalsRowFunction = columnSettings.TotalFunction.Value;
+                    }
+                }
             }
         }
 
-        private void CreateFormattedTable(ExcelSheetDirective sheetInfo, IXLWorksheet worksheet, DataTable dataTable)
+        private IXLTable CreateFormattedTable(ExcelSheetDirective sheetInfo, IXLWorksheet worksheet, DataTable dataTable)
         {
             IXLCell topLeftCell = worksheet.Cell(1, 1);
 
@@ -108,6 +122,8 @@ namespace Betlln.Data.Integration.Office
 
             IXLColumns tableColumnsReference = worksheet.Columns(1, table.ColumnCount());
             tableColumnsReference.AdjustToContents();
+
+            return table;
         }
     }
 }
