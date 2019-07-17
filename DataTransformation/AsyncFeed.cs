@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
 using Betlln.Data.Integration.Core;
 using Betlln.Logging;
 
@@ -38,7 +37,7 @@ namespace Betlln.Data.Integration
         public void Finish()
         {
             _finished = true;
-            Debug.Print($"Stream {Name} has {_records.Count} left to emit");
+            Debug.Print($"Stream {Name} finished with {_records.Count} left to emit");
         }
 
         public IEnumerator<DataRecord> GetEnumerator()
@@ -69,6 +68,7 @@ namespace Betlln.Data.Integration
                 }
             }
 
+            Debug.Print($"Stream {Name} is done moving forward ({_records.Count} left to emit)");
             return false;
         }
 
@@ -80,12 +80,14 @@ namespace Betlln.Data.Integration
         public DataRecord Current { get; private set; }
         object IEnumerator.Current => Current;
 
+        /// <summary>
+        /// Disposes the feed
+        /// </summary>
+        /// <remarks>
+        /// Because <see cref="CreateReader"/> returns itself, without this empty method, disposing gets into an infinite and causes a stack overflow
+        /// </remarks>
         public override void Dispose()
         {
-            if (!_finished)
-            {
-                throw new ThreadInterruptedException();
-            }
         }
     }
 }

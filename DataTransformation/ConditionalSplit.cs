@@ -156,6 +156,7 @@ namespace Betlln.Data.Integration
 
             if (Finished)
             {
+                Debug.Print($"Started finished stream {dynamicFeed.Name}");
                 dynamicFeed.Finish();
             }
 
