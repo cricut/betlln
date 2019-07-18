@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Betlln.Data.Integration.Core
 {
@@ -82,17 +83,13 @@ namespace Betlln.Data.Integration.Core
 
         public List<ColumnInfo> GetLayout()
         {
-            List<ColumnInfo> columns = new List<ColumnInfo>();
-
-            foreach (KeyValuePair<string, int> mapping in _nameMap)
-            {
-                DataElement dataElement = _elements[mapping.Value];
-                Type type = dataElement.Value == null ? typeof(string) : dataElement.Value.GetType();
-                ColumnInfo columnInfo = new ColumnInfo(dataElement.ColumnName, type);
-                columns.Add(columnInfo);
-            }
-
-            return columns;
+            return _nameMap
+                .ToList()
+                .OrderBy(x => x.Value)
+                .Select(mapping => _elements[mapping.Value])
+                .Select(dataElement => new { dataElement.ColumnName, ColumnType = dataElement.Value == null ? typeof(string) : dataElement.Value.GetType() })
+                .Select(columnInfo => new ColumnInfo(columnInfo.ColumnName, columnInfo.ColumnType))
+                .ToList();
         }
     }
 }

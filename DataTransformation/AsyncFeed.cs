@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
 using Betlln.Data.Integration.Core;
 using Betlln.Logging;
 
@@ -38,7 +37,7 @@ namespace Betlln.Data.Integration
         public void Finish()
         {
             _finished = true;
-            Debug.Print($"Stream {Name} has {_records.Count} left to emit");
+            Debug.Print($"Stream {Name} finished with {_records.Count} left to emit");
         }
 
         public IEnumerator<DataRecord> GetEnumerator()
@@ -54,7 +53,7 @@ namespace Betlln.Data.Integration
 
         public bool MoveNext()
         {
-            while(!_finished || _records.Count > 0)
+            while(IsOpen)
             {
                 DataRecord record;
                 if (_records.TryDequeue(out record))
@@ -69,7 +68,13 @@ namespace Betlln.Data.Integration
                 }
             }
 
+            Debug.Print($"Stream {Name} is done moving forward ({_records.Count} left to emit)");
             return false;
+        }
+
+        private bool IsOpen
+        {
+            get { return !_finished || _records.Count > 0; }
         }
 
         public void Reset()
@@ -80,11 +85,17 @@ namespace Betlln.Data.Integration
         public DataRecord Current { get; private set; }
         object IEnumerator.Current => Current;
 
+        /// <summary>
+        /// Disposes the feed
+        /// </summary>
+        /// <remarks>
+        /// Because <see cref="CreateReader"/> returns itself, any invocation of base.Dispose() will get into an infinite and cause a stack overflow
+        /// </remarks>
         public override void Dispose()
         {
-            if (!_finished)
+            if (IsOpen)
             {
-                throw new ThreadInterruptedException();
+                Dts.Notify.Log($"Stream {Name} was disposed with {_records.Count} still unread.", LogEventType.Warn);
             }
         }
     }

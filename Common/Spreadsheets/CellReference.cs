@@ -32,7 +32,7 @@ namespace Betlln.Spreadsheets
             return ColumnLetter + RowNumber;
         }
 
-        internal static uint GetColumnNumberFromLetter(string columnLetter)
+        public static uint GetColumnNumberFromLetter(string columnLetter)
         {
             if (columnLetter == null)
             {
