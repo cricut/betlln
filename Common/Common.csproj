@@ -54,6 +54,7 @@
     <Compile Include="IConsoleScreen.cs" />
     <Compile Include="Logging\DebugLogger.cs" />
     <Compile Include="Logging\FileAppendLogger.cs" />
+    <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\log4netAdapter.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Logging\DatabaseLogger.cs" />
