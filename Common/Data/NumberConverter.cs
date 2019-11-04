@@ -14,7 +14,7 @@ namespace Betlln.Data
         }
 
         [Obsolete("Use " + nameof(RoundToInt32) + " instead.")]
-        public static int? ConvertToInt(decimal? number)   //current
+        public static int? ConvertToInt(decimal? number)
         {
             if (number.HasValue)
             {
@@ -52,7 +52,7 @@ namespace Betlln.Data
             return null;
         }
 
-        private static bool TryParseDecimal(NumberFormatInfo numberFormatInfo, string rawValue, out decimal decimalValue)
+        private static bool TryParseDecimal(string rawValue, NumberFormatInfo numberFormatInfo, out decimal decimalValue)
         {
             if (rawValue == null)
             {
@@ -85,7 +85,7 @@ namespace Betlln.Data
                 .Replace(numberFormatInfo.CurrencySymbol, string.Empty);
         }
 
-        public static decimal? ConvertObjectToNumber(object obj, NumberFormatInfo numberFormatInfo)   //current
+        public static decimal? ConvertObjectToNumber(object obj, NumberFormatInfo numberFormatInfo)
         {
             decimal? actualValue = null;
 
@@ -123,13 +123,13 @@ namespace Betlln.Data
 
         public static bool IsNumber(this string rawValue)
         {
-            return TryParseDecimal(NumberFormatInfo.CurrentInfo, rawValue, out _);
+            return TryParseDecimal(rawValue, NumberFormatInfo.CurrentInfo, out _);
         }
 
         public static decimal ToDecimal(this string rawValue)
         {
             decimal value;
-            if (TryParseDecimal(NumberFormatInfo.CurrentInfo, rawValue, out value))
+            if (TryParseDecimal(rawValue, NumberFormatInfo.CurrentInfo, out value))
             {
                 return value;
             }
