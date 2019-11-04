@@ -6,7 +6,15 @@ namespace Betlln.Data
 {
     public static class NumberConverter
     {
-        public static int? ConvertToInt(decimal? number)
+        public static int? RoundToInt32(this decimal? number)
+        {
+            #pragma warning disable 618
+            return ConvertToInt(number);
+            #pragma warning restore 618
+        }
+
+        [Obsolete("Use " + nameof(RoundToInt32) + " instead.")]
+        public static int? ConvertToInt(decimal? number)   //current
         {
             if (number.HasValue)
             {
@@ -14,6 +22,11 @@ namespace Betlln.Data
             }
 
             return null;
+        }
+
+        public static int ToInt32(this string rawValue)
+        {
+            return (int) ToDecimal(rawValue);
         }
 
         internal static decimal? Parse(string nativeValue, NumberFormatInfo numberFormatInfo)
@@ -24,7 +37,7 @@ namespace Betlln.Data
                 {
                     nativeValue = $"-{nativeValue.Substring(1, nativeValue.Length - 2)}";
                 }
-                nativeValue = nativeValue.Replace(numberFormatInfo.NumberGroupSeparator, string.Empty);
+                nativeValue = GetUnformattedNumber(nativeValue, numberFormatInfo);
 
                 try
                 {
@@ -39,7 +52,40 @@ namespace Betlln.Data
             return null;
         }
 
-        public static decimal? ConvertObjectToNumber(object obj, NumberFormatInfo numberFormatInfo)
+        private static bool TryParseDecimal(NumberFormatInfo numberFormatInfo, string rawValue, out decimal decimalValue)
+        {
+            if (rawValue == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            try
+            {
+                decimal? parseResult = Parse(rawValue, numberFormatInfo);
+                if(parseResult == null)
+                {
+                    throw new ArgumentException();
+                }
+
+                decimalValue = parseResult.GetValueOrDefault();
+                return true;
+            }
+            catch
+            {
+                decimalValue = default(decimal);
+                return false;
+            }
+        }
+
+        private static string GetUnformattedNumber(string formattedValue, NumberFormatInfo numberFormatInfo)
+        {
+            return formattedValue
+                .Replace(numberFormatInfo.NumberGroupSeparator, string.Empty)
+                .Replace(numberFormatInfo.PercentSymbol, string.Empty)
+                .Replace(numberFormatInfo.CurrencySymbol, string.Empty);
+        }
+
+        public static decimal? ConvertObjectToNumber(object obj, NumberFormatInfo numberFormatInfo)   //current
         {
             decimal? actualValue = null;
 
@@ -77,45 +123,17 @@ namespace Betlln.Data
 
         public static bool IsNumber(this string rawValue)
         {
-            return TryParseDecimal(rawValue, out _);
-        }
-
-        public static int ToInt32(this string rawValue)
-        {
-            return (int) ToDecimal(rawValue);
+            return TryParseDecimal(NumberFormatInfo.CurrentInfo, rawValue, out _);
         }
 
         public static decimal ToDecimal(this string rawValue)
         {
             decimal value;
-            if (TryParseDecimal(rawValue, out value))
+            if (TryParseDecimal(NumberFormatInfo.CurrentInfo, rawValue, out value))
             {
                 return value;
             }
             throw new ArgumentException();
-        }
-
-        private static bool TryParseDecimal(string rawValue, out decimal decimalValue)
-        {
-            rawValue = GetUnformattedNumber(rawValue);
-
-            decimal tempValue;
-            bool couldParse = decimal.TryParse(rawValue, out tempValue);
-            decimalValue = couldParse ? tempValue : default(decimal);
-            return couldParse;
-        }
-
-        private static string GetUnformattedNumber(string formattedValue)
-        {
-            return formattedValue
-                .Replace(NumberFormat.NumberGroupSeparator, string.Empty)
-                .Replace(NumberFormat.PercentSymbol, string.Empty)
-                .Replace(NumberFormat.CurrencySymbol, string.Empty);
-        }
-
-        private static NumberFormatInfo NumberFormat
-        {
-            get { return CultureInfo.GetCultureInfo("en-US").NumberFormat; }
         }
     }
 }
