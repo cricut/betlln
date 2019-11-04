@@ -52,6 +52,10 @@
     <Compile Include="Data\File\PdfFileAdapter.cs" />
     <Compile Include="Data\NumberConverter.cs" />
     <Compile Include="IConsoleScreen.cs" />
+    <Compile Include="IO\FileDemand.cs" />
+    <Compile Include="IO\FileSystem.cs" />
+    <Compile Include="IO\IFileSystem.cs" />
+    <Compile Include="IO\MultiFileDemand.cs" />
     <Compile Include="Logging\DebugLogger.cs" />
     <Compile Include="Logging\FileAppendLogger.cs" />
     <Compile Include="Logging\ILogger.cs" />
@@ -107,6 +111,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
