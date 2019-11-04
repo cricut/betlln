@@ -74,5 +74,48 @@ namespace Betlln.Data
         {
             get { return ((char) 8212).ToString(); }
         }
+
+        public static bool IsNumber(this string rawValue)
+        {
+            return TryParseDecimal(rawValue, out _);
+        }
+
+        public static int ToInt32(this string rawValue)
+        {
+            return (int) ToDecimal(rawValue);
+        }
+
+        public static decimal ToDecimal(this string rawValue)
+        {
+            decimal value;
+            if (TryParseDecimal(rawValue, out value))
+            {
+                return value;
+            }
+            throw new ArgumentException();
+        }
+
+        private static bool TryParseDecimal(string rawValue, out decimal decimalValue)
+        {
+            rawValue = GetUnformattedNumber(rawValue);
+
+            decimal tempValue;
+            bool couldParse = decimal.TryParse(rawValue, out tempValue);
+            decimalValue = couldParse ? tempValue : default(decimal);
+            return couldParse;
+        }
+
+        private static string GetUnformattedNumber(string formattedValue)
+        {
+            return formattedValue
+                .Replace(NumberFormat.NumberGroupSeparator, string.Empty)
+                .Replace(NumberFormat.PercentSymbol, string.Empty)
+                .Replace(NumberFormat.CurrencySymbol, string.Empty);
+        }
+
+        private static NumberFormatInfo NumberFormat
+        {
+            get { return CultureInfo.GetCultureInfo("en-US").NumberFormat; }
+        }
     }
 }
