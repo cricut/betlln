@@ -1,4 +1,7 @@
-﻿using Betlln.Data.File;
+﻿using System.IO;
+using System.Linq;
+using Betlln.Data.File;
+using Betlln.Spreadsheets;
 using NUnit.Framework;
 
 namespace DtsTests
@@ -6,6 +9,23 @@ namespace DtsTests
     [TestFixture]
     public class OpenXmlFileAdapterTests
     {
+        [Test]
+        public void CanReadMacroEnabled2007PlusWorkbook()
+        {
+            FileAdapterFactory fileAdapterFactory = new FileAdapterFactory();
+            string fileName = Path.Combine(Directory.GetParent(GetType().Assembly.Location).FullName, "sample.xlsm");
+
+            object cellK28Value;
+            using (IDataFileAdapter dataFileAdapter = fileAdapterFactory.GetFileAdapter(fileName, useCached: false))
+            {
+                FileRow row28 = dataFileAdapter.PlainData.FirstOrDefault(x => x.RowNumber == 28);
+                DataCell cellK28 = row28.Cells.FirstOrDefault(y => y.ColumnNumber == CellReference.GetColumnNumberFromLetter("K"));
+                cellK28Value = cellK28.Value;
+            }
+
+            Assert.AreEqual(102.ToString(), cellK28Value);
+        }
+
         [Test]
         public void UnMirrorValue_ReturnsCorrectValue_ForMirroredValue()
         {

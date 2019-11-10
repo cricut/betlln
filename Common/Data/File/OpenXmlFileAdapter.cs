@@ -33,9 +33,12 @@ namespace Betlln.Data.File
 
             _document = SpreadsheetDocument.Open(FilePath, isEditable: false);
 
-            Sheet firstSheet = Sheets.First();
-            _sheetId = firstSheet.Id;
-            _sheetName = firstSheet.Name.Value;
+            SelectSheet(selector: IsSheetVisible);
+        }
+        
+        private static bool IsSheetVisible(Sheet sheet)
+        {
+            return (sheet.State?.Value).GetValueOrDefault(SheetStateValues.Visible) == SheetStateValues.Visible;
         }
 
         private string FilePath { get; }
@@ -64,10 +67,15 @@ namespace Betlln.Data.File
                     throw new ArgumentNullException(nameof(sectionName), @"Cannot select a null/blank sheet.");
                 }
 
-                Sheet selectedSheet = Sheets.First(sheet => CompareStrings(sheet.Name, sectionName));
-                _sheetId = selectedSheet.Id.Value;
-                _sheetName = sectionName;
+                SelectSheet(sheet => CompareStrings(sheet.Name, sectionName));
             }
+        }
+
+        private void SelectSheet(Func<Sheet, bool> selector)
+        {
+            Sheet firstSheet = Sheets.First(selector);
+            _sheetId = firstSheet.Id;
+            _sheetName = firstSheet.Name.Value;
         }
 
         private static bool CompareStrings(StringValue stringValue, string compareValue)

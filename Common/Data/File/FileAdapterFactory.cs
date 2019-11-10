@@ -26,6 +26,7 @@ namespace Betlln.Data.File
                     baseAdapter = new DelimitedFileAdapter(filePath, ',');
                     break;
                 case "xlsx":
+                case "xlsm":
                     baseAdapter = new OpenXmlFileAdapter(filePath);
                     break;
                 default:
