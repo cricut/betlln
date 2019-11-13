@@ -1,9 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Betlln.Data.File
 {
     public class FileAdapterFactory : IFileAdapterFactory
     {
+        private static readonly Dictionary<string, FileAdapterCache> CachedAdapters = new Dictionary<string, FileAdapterCache>();
+
+        /// <inheritdoc />
+        public IDataFileAdapter GetFileAdapter(string filePath)
+        {
+            return GetFileAdapter(filePath, true);
+        }
+
+        /// <inheritdoc />
+        [Obsolete("Use GetFileAdapter(string filePath) instead.")]
         public IDataFileAdapter GetFileAdapter(string filePath, bool useCached)
         {
             if (string.IsNullOrWhiteSpace(filePath))
@@ -11,30 +22,40 @@ namespace Betlln.Data.File
                 throw new ArgumentNullException(nameof(filePath));
             }
 
-            IDataFileAdapter baseAdapter;
+            string cacheKey = filePath.ToUpper().Trim();
 
+            FileAdapterCache adapter;
+            if (CachedAdapters.ContainsKey(cacheKey))
+            {
+                adapter = CachedAdapters[cacheKey];
+                adapter.Reset();
+            }
+            else
+            {
+                adapter = new FileAdapterCache(GetBaseAdapter(filePath));
+                CachedAdapters.Add(cacheKey, adapter);    
+            }
+            
+            return adapter;
+        }
+
+        private static IDataFileAdapter GetBaseAdapter(string filePath)
+        {
             string fileExtension = SystemExtensions.GetFileExtension(filePath);
             switch (fileExtension)
             {
                 case "pdf":
-                    baseAdapter = new PdfFileAdapter(filePath);
-                    break;
+                    return new PdfFileAdapter(filePath);
                 case "txt":
-                    baseAdapter = new DelimitedFileAdapter(filePath, '\t');
-                    break;
+                    return new DelimitedFileAdapter(filePath, '\t');
                 case "csv":
-                    baseAdapter = new DelimitedFileAdapter(filePath, ',');
-                    break;
+                    return new DelimitedFileAdapter(filePath, ',');
                 case "xlsx":
                 case "xlsm":
-                    baseAdapter = new OpenXmlFileAdapter(filePath);
-                    break;
+                    return new OpenXmlFileAdapter(filePath);
                 default:
-                    baseAdapter = new ExcelFileAdapter(filePath);
-                    break;
+                    return new ExcelFileAdapter(filePath);
             }
-
-            return useCached ? new FileAdapterCache(baseAdapter) : baseAdapter;
         }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Betlln.Collections;
 
 namespace Betlln.Data.File
 {
     public class FileAdapterCache : IDataFileAdapter
     {
-        private readonly IDataFileAdapter _sourceAdapter;
+        private IDataFileAdapter _sourceAdapter;
         private readonly List<Section> _fileSections;
 
         public FileAdapterCache(IDataFileAdapter sourceAdapter)
@@ -17,6 +18,12 @@ namespace Betlln.Data.File
 
             _sourceAdapter = sourceAdapter;
             _fileSections = new List<Section>();
+        }
+
+        ~FileAdapterCache()
+        {
+            _sourceAdapter.Dispose();
+            _sourceAdapter = null;
         }
 
         private Section CurrentSection { get; set; }
@@ -31,65 +38,68 @@ namespace Betlln.Data.File
             {
                 string sectionName = value;
 
-                Section section = _fileSections.Find(x => x.Name == sectionName);
-                if (section == null)
+                if (CurrentSection == null || CurrentSection.Name != sectionName)
                 {
-                    _sourceAdapter.CurrentSectionName = sectionName;
-                    section = new Section(sectionName);
-                    _fileSections.Add(section);
-                }
+                    Section section = _fileSections.Find(x => x.Name == sectionName);
+                    if (section == null)
+                    {
+                        _sourceAdapter.CurrentSectionName = sectionName;
+                        section = new Section(_sourceAdapter);
+                        _fileSections.Add(section);
+                    }
+                    else
+                    {
+                        throw new ArgumentException($"The file does not contain section {sectionName}.");
+                    }
 
-                CurrentSection = section;
+                    CurrentSection = section;
+                }
             }
         }
 
         public void SelectSection(Func<IEnumerable<string>, string> sectionSelector)
         {
             _sourceAdapter.SelectSection(sectionSelector);
-
-            string currentSectionName = _sourceAdapter.CurrentSectionName;
-            Section section = _fileSections.Find(x => x.Name == currentSectionName);
-
-            if (section == null)
-            {
-                section = new Section(currentSectionName);
-                _fileSections.Add(section);
-            }
-
-            CurrentSection = section;
+            CurrentSectionName = _sourceAdapter.CurrentSectionName;
         }
 
         public IEnumerable<FileRow> PlainData
         {
             get
             {
-                if (CurrentSection == null)
-                {
-                    Section newSection = new Section(CurrentSectionName);
-                    newSection.PlainData.AddRange(_sourceAdapter.PlainData);
-                    _fileSections.Add(newSection);
-                    CurrentSection = newSection;
-                }
+                CurrentSectionName = _sourceAdapter.CurrentSectionName;
+                return CurrentSection?.PlainData;
+            }
+        }
 
-                return CurrentSection.PlainData;
+        public void Reset()
+        {
+            foreach (Section section in _fileSections)
+            {
+                section.Dispose();
             }
         }
 
         public void Dispose()
         {
-            _sourceAdapter.Dispose();
+            Reset();
         }
 
-        private class Section
+        private class Section : IDisposable
         {
-            public Section(string name)
+            public Section(IDataFileAdapter sourceAdapter)
             {
-                Name = name;
-                PlainData = new List<FileRow>();
+                Name = sourceAdapter.CurrentSectionName;
+                PlainData = new CachedReader<FileRow>(sourceAdapter.PlainData);
             }
 
             public string Name { get; }
-            public List<FileRow> PlainData { get; }
+            public CachedReader<FileRow> PlainData { get; }
+
+            public void Dispose()
+            {
+                PlainData.Dispose();
+            }
         }
     }
 }

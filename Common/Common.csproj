@@ -37,6 +37,7 @@
     <Compile Include="ConnectionInfo.cs" />
     <Compile Include="ConsoleScreen.cs" />
     <Compile Include="Data\DatabaseColumnAttribute.cs" />
+    <Compile Include="Collections\CachedReader.cs" />
     <Compile Include="Data\File\DataCell.cs" />
     <Compile Include="Data\File\DelimitedFileAdapter.cs" />
     <Compile Include="Data\File\DocumentFormatException.cs" />
