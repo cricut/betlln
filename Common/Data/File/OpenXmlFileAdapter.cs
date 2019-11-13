@@ -76,6 +76,14 @@ namespace Betlln.Data.File
             Sheet firstSheet = Sheets.First(selector);
             _sheetId = firstSheet.Id;
             _sheetName = firstSheet.Name.Value;
+
+            DisposeEnumerator();
+
+            EnsureLoadedState();
+            WorksheetPart worksheetPart = (WorksheetPart)_document.WorkbookPart.GetPartById(_sheetId);
+            SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+            SharedStringTablePart stringTablePart = _document.WorkbookPart.SharedStringTablePart;
+            _enumerator = new Enumerator(sheetData, stringTablePart);
         }
 
         private static bool CompareStrings(StringValue stringValue, string compareValue)
@@ -95,14 +103,6 @@ namespace Betlln.Data.File
         {
             get
             {
-                if (_enumerator == null)
-                {
-                    EnsureLoadedState();
-                    WorksheetPart worksheetPart = (WorksheetPart)_document.WorkbookPart.GetPartById(_sheetId);
-                    SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
-                    SharedStringTablePart stringTablePart = _document.WorkbookPart.SharedStringTablePart;
-                    _enumerator = new Enumerator(sheetData, stringTablePart);
-                }
                 return _enumerator;
             }
         }
@@ -117,15 +117,16 @@ namespace Betlln.Data.File
 
         private class Enumerator : IEnumerable<FileRow>, IEnumerator<FileRow>
         {
+            private IEnumerator<Row> _rowEnumerator;
             private readonly SharedStringTablePart _stringTablePart;
-            private readonly IEnumerator<Row> _rowEnumerator;
 
-            // ReSharper disable once SuggestBaseTypeForParameter
             public Enumerator(SheetData sheetData, SharedStringTablePart stringTablePart)
             {
+                SheetData = sheetData;
                 _stringTablePart = stringTablePart;
-                _rowEnumerator = sheetData.Descendants<Row>().GetEnumerator();
             }
+
+            private SheetData SheetData { get; }
 
             IEnumerator IEnumerable.GetEnumerator()
             {
@@ -139,12 +140,16 @@ namespace Betlln.Data.File
 
             public bool MoveNext()
             {
+                if (_rowEnumerator == null)
+                {
+                    _rowEnumerator = SheetData.Descendants<Row>().GetEnumerator();
+                }
                 return _rowEnumerator.MoveNext();
             }
 
             public void Reset()
             {
-                _rowEnumerator.Reset();
+                _rowEnumerator?.Reset();
             }
 
             object IEnumerator.Current
@@ -158,7 +163,7 @@ namespace Betlln.Data.File
                 {
                     FileRow fileRow = null;
 
-                    if (_rowEnumerator.Current != null)
+                    if (_rowEnumerator?.Current != null)
                     {
                         uint lastColumnNumber = 0;
                         Row row = _rowEnumerator.Current;
@@ -222,7 +227,8 @@ namespace Betlln.Data.File
 
             public void Dispose()
             {
-                _rowEnumerator.Dispose();
+                _rowEnumerator?.Dispose();
+                _rowEnumerator = null;
             }
         }
 
@@ -241,8 +247,18 @@ namespace Betlln.Data.File
             return rawValue;
         }
 
+        private void DisposeEnumerator()
+        {
+            if (_enumerator != null)
+            {
+                _enumerator.Dispose();
+                _enumerator = null;
+            }
+        }
+
         public void Dispose()
         {
+            DisposeEnumerator();
             _document?.Dispose();
             _document = null;
         }
