@@ -5,8 +5,15 @@ namespace Betlln.Data.File
 {
     public class FileAdapterFactory : IFileAdapterFactory
     {
+        public const string DefaultSectionName = "default";
         private static readonly Dictionary<string, FileAdapterCache> CachedAdapters = new Dictionary<string, FileAdapterCache>();
 
+        static FileAdapterFactory()
+        {
+            AppDomain.CurrentDomain.DomainUnload += StaticDispose;
+            AppDomain.CurrentDomain.ProcessExit += StaticDispose;
+        }
+        
         /// <inheritdoc />
         public IDataFileAdapter GetFileAdapter(string filePath)
         {
@@ -25,17 +32,16 @@ namespace Betlln.Data.File
             string cacheKey = filePath.ToUpper().Trim();
 
             FileAdapterCache adapter;
-            if (CachedAdapters.ContainsKey(cacheKey))
+            if (!CachedAdapters.ContainsKey(cacheKey))
             {
-                adapter = CachedAdapters[cacheKey];
-                adapter.Reset();
+                adapter = new FileAdapterCache(GetBaseAdapter(filePath));
+                CachedAdapters.Add(cacheKey, adapter);
             }
             else
             {
-                adapter = new FileAdapterCache(GetBaseAdapter(filePath));
-                CachedAdapters.Add(cacheKey, adapter);    
+                adapter = CachedAdapters[cacheKey];
             }
-            
+
             return adapter;
         }
 
@@ -56,6 +62,15 @@ namespace Betlln.Data.File
                 default:
                     return new ExcelFileAdapter(filePath);
             }
+        }
+
+        private static void StaticDispose(object sender, EventArgs e)
+        {
+            foreach (var cachedAdapter in CachedAdapters)
+            {
+                cachedAdapter.Value.Dispose();
+            }
+            CachedAdapters.Clear();
         }
     }
 }

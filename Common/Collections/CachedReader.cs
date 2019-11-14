@@ -21,7 +21,7 @@ namespace Betlln.Collections
             Content = new List<T>();
         }
 
-        private bool FullyCached { get; set; }
+        internal bool FullyCached { get; private set; }
         private List<T> Content { get; }
 
         IEnumerator IEnumerable.GetEnumerator()

@@ -42,7 +42,12 @@ namespace Betlln.Data.File
         }
 
         private string FilePath { get; }
-        
+
+        public IEnumerable<string> SectionNames
+        {
+            get { return Sheets.Select(x => x.Name.Value); }
+        }
+
         private IEnumerable<Sheet> Sheets
         {
             get

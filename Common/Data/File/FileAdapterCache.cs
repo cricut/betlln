@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Betlln.Collections;
 
 namespace Betlln.Data.File
 {
     public class FileAdapterCache : IDataFileAdapter
     {
-        private IDataFileAdapter _sourceAdapter;
-        private readonly List<Section> _fileSections;
+        private readonly IDataFileAdapter _sourceAdapter;
+        private readonly Dictionary<string, CachedReader<FileRow>> _readers;
 
         public FileAdapterCache(IDataFileAdapter sourceAdapter)
         {
@@ -17,88 +18,56 @@ namespace Betlln.Data.File
             }
 
             _sourceAdapter = sourceAdapter;
-            _fileSections = new List<Section>();
+            _readers = new Dictionary<string, CachedReader<FileRow>>();
         }
 
         ~FileAdapterCache()
         {
-            _sourceAdapter.Dispose();
-            _sourceAdapter = null;
+            Dispose();
         }
-
-        private Section CurrentSection { get; set; }
 
         public string CurrentSectionName
         {
-            get
-            {
-                return _sourceAdapter.CurrentSectionName;
-            }
-            set
-            {
-                string sectionName = value;
+            get { return _sourceAdapter.CurrentSectionName; }
+            set { _sourceAdapter.CurrentSectionName = value; }
+        }
 
-                if (CurrentSection == null || CurrentSection.Name != sectionName)
-                {
-                    Section section = _fileSections.Find(x => x.Name == sectionName);
-                    if (section == null)
-                    {
-                        _sourceAdapter.CurrentSectionName = sectionName;
-                        section = new Section(_sourceAdapter);
-                        _fileSections.Add(section);
-                    }
-                    else
-                    {
-                        throw new ArgumentException($"The file does not contain section {sectionName}.");
-                    }
-
-                    CurrentSection = section;
-                }
-            }
+        public IEnumerable<string> SectionNames
+        {
+            get { return _sourceAdapter.SectionNames; }
         }
 
         public void SelectSection(Func<IEnumerable<string>, string> sectionSelector)
         {
             _sourceAdapter.SelectSection(sectionSelector);
-            CurrentSectionName = _sourceAdapter.CurrentSectionName;
         }
 
         public IEnumerable<FileRow> PlainData
         {
             get
             {
-                CurrentSectionName = _sourceAdapter.CurrentSectionName;
-                return CurrentSection?.PlainData;
-            }
-        }
+                string sectionName = _sourceAdapter.CurrentSectionName;
 
-        public void Reset()
-        {
-            foreach (Section section in _fileSections)
-            {
-                section.Dispose();
+                if (!_readers.ContainsKey(sectionName))
+                {
+                    _readers.Add(sectionName, new CachedReader<FileRow>(_sourceAdapter.PlainData));
+                }
+
+                return _readers[sectionName];
             }
         }
 
         public void Dispose()
         {
-            Reset();
-        }
-
-        private class Section : IDisposable
-        {
-            public Section(IDataFileAdapter sourceAdapter)
+            foreach (var readerInfo in _readers)
             {
-                Name = sourceAdapter.CurrentSectionName;
-                PlainData = new CachedReader<FileRow>(sourceAdapter.PlainData);
+                readerInfo.Value.Dispose();
             }
 
-            public string Name { get; }
-            public CachedReader<FileRow> PlainData { get; }
-
-            public void Dispose()
+            if (_readers.Values.All(x => x.FullyCached) && 
+                _readers.Count == SectionNames.Count())
             {
-                PlainData.Dispose();
+                _sourceAdapter.Dispose();
             }
         }
     }
