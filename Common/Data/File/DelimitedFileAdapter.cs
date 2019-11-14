@@ -149,7 +149,7 @@ namespace Betlln.Data.File
 
         public void Dispose()
         {
-            _enumerator.Dispose();
+            _enumerator?.Dispose();
             _enumerator = null;
         }
     }
