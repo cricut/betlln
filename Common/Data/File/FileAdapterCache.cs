@@ -59,15 +59,22 @@ namespace Betlln.Data.File
 
         public void Dispose()
         {
-            foreach (var readerInfo in _readers)
+            if (_readers != null)
             {
-                readerInfo.Value.Dispose();
-            }
+                foreach (var readerInfo in _readers)
+                {
+                    readerInfo.Value.Dispose();
+                }
 
-            if (_readers.Values.All(x => x.FullyCached) && 
-                _readers.Count == SectionNames.Count())
+                if (_readers.Values.All(x => x.FullyCached) && 
+                    _readers.Count == _sourceAdapter?.SectionNames?.Count())
+                {
+                    _sourceAdapter?.Dispose();
+                }
+            }
+            else  //only accessible by finalizer
             {
-                _sourceAdapter.Dispose();
+                _sourceAdapter?.Dispose();
             }
         }
     }
