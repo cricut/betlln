@@ -48,35 +48,15 @@ namespace Betlln.IO
         {
             if (demand.RequiredItems.Any())
             {
-                foreach (FileDemand requiredItem in demand.RequiredItems)
-                {
-                    if (!CanFindFile(requiredItem, folderPath))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
+                return CanFindAllFiles(demand.RequiredItems, folderPath);
             }
 
-            foreach (IReadOnlyList<FileDemand> demandGroup in demand.OptionGroups)
-            {
-                bool isGroupComplete = true;
-                foreach (FileDemand fileDemand in demandGroup)
-                {
-                    if (!CanFindFile(fileDemand, folderPath))
-                    {
-                        isGroupComplete = false;
-                    }
-                }
+            return demand.OptionGroups.Any(demandGroup => CanFindAllFiles(demandGroup, folderPath));
+        }
 
-                if (isGroupComplete)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+        private bool CanFindAllFiles(IEnumerable<FileDemand> requiredItems, string folderPath)
+        {
+            return requiredItems.All(requiredItem => CanFindFile(requiredItem, folderPath));
         }
 
         public string FindDownloadedFile(FileDemand fileDemand, string folderPath, TimeSpan timeout)
