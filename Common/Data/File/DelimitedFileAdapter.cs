@@ -21,8 +21,13 @@ namespace Betlln.Data.File
 
         public string CurrentSectionName
         {
-            get { return "default"; }
+            get { return FileAdapterFactory.DefaultSectionName; }
             set { }
+        }
+
+        public IEnumerable<string> SectionNames
+        {
+            get { return FileAdapterFactory.DefaultSectionName.ToEnumerable(); }
         }
         
         public void SelectSection(Func<IEnumerable<string>, string> sectionSelector)
@@ -144,7 +149,7 @@ namespace Betlln.Data.File
 
         public void Dispose()
         {
-            _enumerator.Dispose();
+            _enumerator?.Dispose();
             _enumerator = null;
         }
     }

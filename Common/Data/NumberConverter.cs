@@ -6,6 +6,14 @@ namespace Betlln.Data
 {
     public static class NumberConverter
     {
+        public static int? RoundToInt32(this decimal? number)
+        {
+            #pragma warning disable 618
+            return ConvertToInt(number);
+            #pragma warning restore 618
+        }
+
+        [Obsolete("Use " + nameof(RoundToInt32) + " instead.")]
         public static int? ConvertToInt(decimal? number)
         {
             if (number.HasValue)
@@ -16,6 +24,11 @@ namespace Betlln.Data
             return null;
         }
 
+        public static int ToInt32(this string rawValue)
+        {
+            return (int) ToDecimal(rawValue);
+        }
+
         internal static decimal? Parse(string nativeValue, NumberFormatInfo numberFormatInfo)
         {
             if (!string.IsNullOrWhiteSpace(nativeValue))
@@ -24,7 +37,7 @@ namespace Betlln.Data
                 {
                     nativeValue = $"-{nativeValue.Substring(1, nativeValue.Length - 2)}";
                 }
-                nativeValue = nativeValue.Replace(numberFormatInfo.NumberGroupSeparator, string.Empty);
+                nativeValue = GetUnformattedNumber(nativeValue, numberFormatInfo);
 
                 try
                 {
@@ -37,6 +50,39 @@ namespace Betlln.Data
             }
 
             return null;
+        }
+
+        private static bool TryParseDecimal(string rawValue, NumberFormatInfo numberFormatInfo, out decimal decimalValue)
+        {
+            if (rawValue == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            try
+            {
+                decimal? parseResult = Parse(rawValue, numberFormatInfo);
+                if(parseResult == null)
+                {
+                    throw new ArgumentException();
+                }
+
+                decimalValue = parseResult.GetValueOrDefault();
+                return true;
+            }
+            catch
+            {
+                decimalValue = default(decimal);
+                return false;
+            }
+        }
+
+        private static string GetUnformattedNumber(string formattedValue, NumberFormatInfo numberFormatInfo)
+        {
+            return formattedValue
+                .Replace(numberFormatInfo.NumberGroupSeparator, string.Empty)
+                .Replace(numberFormatInfo.PercentSymbol, string.Empty)
+                .Replace(numberFormatInfo.CurrencySymbol, string.Empty);
         }
 
         public static decimal? ConvertObjectToNumber(object obj, NumberFormatInfo numberFormatInfo)
@@ -73,6 +119,21 @@ namespace Betlln.Data
         private static string LongDash
         {
             get { return ((char) 8212).ToString(); }
+        }
+
+        public static bool IsNumber(this string rawValue)
+        {
+            return TryParseDecimal(rawValue, NumberFormatInfo.CurrentInfo, out _);
+        }
+
+        public static decimal ToDecimal(this string rawValue)
+        {
+            decimal value;
+            if (TryParseDecimal(rawValue, NumberFormatInfo.CurrentInfo, out value))
+            {
+                return value;
+            }
+            throw new ArgumentException();
         }
     }
 }

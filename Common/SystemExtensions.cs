@@ -69,11 +69,19 @@ namespace Betlln
             return s.Replace((char) 160, (char)32);
         }
 
+        public static string GetShortDescription(this Exception exception)
+        {
+            string message = string.IsNullOrWhiteSpace(exception.Message)
+                ? exception.ToString()
+                : exception.Message;
+            return message.GetFirstLine();
+        }
+
         public static string GetFirstLine(this string content)
         {
             return content
                 .Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-                .FirstOrDefault();
+                .FirstOrDefault(line => !string.IsNullOrWhiteSpace(line.Trim()));
         }
 
         public static DateTime GetWeekEnd(this DateTime weekStart)

@@ -95,5 +95,27 @@ namespace DtsTests
             Assert.NotNull(actual);
             Assert.AreEqual(3.6m, actual);
         }
+
+        [Test]
+        public void GetFirstLine_ReturnsFirstLine_ForMultiLine()
+        {
+            Assert.AreEqual("i love", "i love\r\ncheese".GetFirstLine());
+            Assert.AreEqual("i love", "i love\ncheese".GetFirstLine());
+        }
+
+        [Test]
+        public void GetFirstLine_ReturnsAllContent_ForSingleLine()
+        {
+            Assert.AreEqual("i love  cheese", "i love  cheese".GetFirstLine());
+        }
+
+        [Test]
+        public void GetFirstLine_ReturnsSecondLine_IfFirstLineBlank()
+        {
+            Assert.AreEqual("i love", "    \r\ni love\r\ncheese".GetFirstLine());
+            Assert.AreEqual("i love", "   \ni love\ncheese".GetFirstLine());
+            Assert.AreEqual("i love", "\r\ni love\ncheese".GetFirstLine());
+            Assert.AreEqual("i love", "\ni love\ncheese".GetFirstLine());
+        }
     }
 }

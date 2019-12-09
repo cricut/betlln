@@ -3,7 +3,7 @@ using System.Security.Principal;
 
 namespace Betlln.Logging
 {
-    public abstract class Logger
+    public abstract class Logger : ILogger
     {
         public void Debug(string message)
         {

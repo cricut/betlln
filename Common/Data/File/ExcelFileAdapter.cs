@@ -31,13 +31,13 @@ namespace Betlln.Data.File
             set
             {
                 // ReSharper disable once UseStringInterpolation
-                SheetName = SheetNames.FirstOrDefault(x => x.Equals(string.Format("{0}$", value)));
+                SheetName = SectionNames.FirstOrDefault(x => x.Equals(string.Format("{0}$", value)));
             }
         }
         
         public void SelectSection(Func<IEnumerable<string>, string> sectionSelector)
         {
-            SheetName = sectionSelector(SheetNames);
+            SheetName = sectionSelector(SectionNames);
         }
 
         private OleDbConnection _connection;
@@ -58,7 +58,7 @@ namespace Betlln.Data.File
         }
 
         private IEnumerable<string> _sheetNames;
-        private IEnumerable<string> SheetNames
+        public IEnumerable<string> SectionNames
         {
             get
             {
@@ -92,7 +92,7 @@ namespace Betlln.Data.File
         {
             if (string.IsNullOrWhiteSpace(SheetName))
             {
-                SheetName = SheetNames.FirstOrDefault();
+                SheetName = SectionNames.FirstOrDefault();
             }
 
             if (_plainData == null)

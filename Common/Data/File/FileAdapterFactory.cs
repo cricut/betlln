@@ -1,9 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Betlln.Data.File
 {
     public class FileAdapterFactory : IFileAdapterFactory
     {
+        public const string DefaultSectionName = "default";
+        private static readonly Dictionary<string, FileAdapterCache> CachedAdapters = new Dictionary<string, FileAdapterCache>();
+
+        static FileAdapterFactory()
+        {
+            AppDomain.CurrentDomain.DomainUnload += StaticDispose;
+            AppDomain.CurrentDomain.ProcessExit += StaticDispose;
+        }
+        
+        /// <inheritdoc />
+        public IDataFileAdapter GetFileAdapter(string filePath)
+        {
+            return GetFileAdapter(filePath, true);
+        }
+
+        /// <inheritdoc />
+        [Obsolete("Use GetFileAdapter(string filePath) instead.")]
         public IDataFileAdapter GetFileAdapter(string filePath, bool useCached)
         {
             if (string.IsNullOrWhiteSpace(filePath))
@@ -11,29 +29,48 @@ namespace Betlln.Data.File
                 throw new ArgumentNullException(nameof(filePath));
             }
 
-            IDataFileAdapter baseAdapter;
+            string cacheKey = filePath.ToUpper().Trim();
 
+            FileAdapterCache adapter;
+            if (!CachedAdapters.ContainsKey(cacheKey))
+            {
+                adapter = new FileAdapterCache(GetBaseAdapter(filePath));
+                CachedAdapters.Add(cacheKey, adapter);
+            }
+            else
+            {
+                adapter = CachedAdapters[cacheKey];
+            }
+
+            return adapter;
+        }
+
+        private static IDataFileAdapter GetBaseAdapter(string filePath)
+        {
             string fileExtension = SystemExtensions.GetFileExtension(filePath);
             switch (fileExtension)
             {
                 case "pdf":
-                    baseAdapter = new PdfFileAdapter(filePath);
-                    break;
+                    return new PdfFileAdapter(filePath);
                 case "txt":
-                    baseAdapter = new DelimitedFileAdapter(filePath, '\t');
-                    break;
+                    return new DelimitedFileAdapter(filePath, '\t');
                 case "csv":
-                    baseAdapter = new DelimitedFileAdapter(filePath, ',');
-                    break;
+                    return new DelimitedFileAdapter(filePath, ',');
                 case "xlsx":
-                    baseAdapter = new OpenXmlFileAdapter(filePath);
-                    break;
+                case "xlsm":
+                    return new OpenXmlFileAdapter(filePath);
                 default:
-                    baseAdapter = new ExcelFileAdapter(filePath);
-                    break;
+                    return new ExcelFileAdapter(filePath);
             }
+        }
 
-            return useCached ? new FileAdapterCache(baseAdapter) : baseAdapter;
+        private static void StaticDispose(object sender, EventArgs e)
+        {
+            foreach (var cachedAdapter in CachedAdapters)
+            {
+                cachedAdapter.Value.Dispose();
+            }
+            CachedAdapters.Clear();
         }
     }
 }
