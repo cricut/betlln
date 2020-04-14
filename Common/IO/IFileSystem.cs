@@ -19,5 +19,6 @@ namespace Betlln.IO
         void Unblock(string fileName);
         void Rename(string currentPath, string newPath);
         string GetExecutableForFileType(string extension);
+        void CreateDirectoryIfNotExist(string directory);
     }
 }
