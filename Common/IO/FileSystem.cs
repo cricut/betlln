@@ -106,6 +106,14 @@ namespace Betlln.IO
             return null;
         }
 
+        public void CreateDirectoryIfNotExist(string directory)
+        {
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+        }
+
         private static string GetAssociatedValue(AssocStr valueName, string docType)
         {
             uint pcchOut = 0;
