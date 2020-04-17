@@ -20,8 +20,7 @@ namespace Betlln.Data
 
         protected string ConnectionAddress { get; }
 
-
-        private static DataTable BuildDataTable(NpgsqlCommand command)
+        protected static DataTable BuildDataTable(NpgsqlCommand command)
         {
             DataSet container = new DataSet();
             using (var adapter = new NpgsqlDataAdapter(command))
@@ -94,7 +93,7 @@ namespace Betlln.Data
             return OpenConnectionFromAddress(connectionSettings.ConnectionString);
         }
 
-        private static NpgsqlConnection OpenConnectionFromAddress(string connectionAddress)
+        protected static NpgsqlConnection OpenConnectionFromAddress(string connectionAddress)
         {
             var connection = new NpgsqlConnection(connectionAddress);
             connection.Open();
