@@ -60,6 +60,7 @@
     <Compile Include="IO\IFileFinder.cs" />
     <Compile Include="IO\IFileSystem.cs" />
     <Compile Include="IO\MultiFileDemand.cs" />
+    <Compile Include="Logging\ApplicationEventLogger.cs" />
     <Compile Include="Logging\DebugLogger.cs" />
     <Compile Include="Logging\FileAppendLogger.cs" />
     <Compile Include="Logging\ILogger.cs" />
