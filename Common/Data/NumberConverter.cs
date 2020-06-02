@@ -85,6 +85,12 @@ namespace Betlln.Data
                 .Replace(numberFormatInfo.CurrencySymbol, string.Empty);
         }
 
+        /// <summary>
+        /// Converts an object into a number (<see cref="decimal"/>), if possible
+        /// </summary>
+        /// <param name="obj">the object to convert</param>
+        /// <param name="numberFormatInfo">the number format style to follow when parsing values</param>
+        /// <returns>null if the value cannot be converted</returns>
         public static decimal? ConvertObjectToNumber(object obj, NumberFormatInfo numberFormatInfo)
         {
             decimal? actualValue = null;
@@ -111,7 +117,8 @@ namespace Betlln.Data
 
         private static bool IsNoneValue(string stringValue)
         {
-            return stringValue == "NA" || 
+            return stringValue == "NA" ||
+                   stringValue == "NULL" ||
                    stringValue == string.Empty || 
                    stringValue == LongDash;
         }
