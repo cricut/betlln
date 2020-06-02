@@ -64,12 +64,7 @@ namespace Betlln.Data.File
             {
                 if (_sheetNames == null)
                 {
-                    DataTable tablesTable = Connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-
-                    if (tablesTable == null)
-                    {
-                        throw new DocumentFormatException($"{FilePath} does not contain tabular data.");
-                    }
+                    DataTable tablesTable = GetMetaDataTable();
 
                     _sheetNames = tablesTable.Rows.Cast<DataRow>()
                             .Select(tableInfoRow => tableInfoRow["TABLE_NAME"].ToString().Trim('\''))
@@ -77,6 +72,27 @@ namespace Betlln.Data.File
                 }
                 return _sheetNames;
             }
+        }
+
+        private DataTable GetMetaDataTable()
+        {
+            DataTable tablesTable;
+
+            try
+            {
+                tablesTable = Connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+            }
+            catch (InvalidOperationException exception)
+            {
+                throw new DocumentFormatException($"{FilePath} is not available or is not an Excel 97-2003 file.", exception);
+            }
+
+            if (tablesTable == null)
+            {
+                throw new DocumentFormatException($"{FilePath} does not contain tabular data.");
+            }
+
+            return tablesTable;
         }
 
         public IEnumerable<FileRow> PlainData
