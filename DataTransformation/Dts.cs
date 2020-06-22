@@ -89,7 +89,7 @@ namespace Betlln.Data.Integration
                 }
                 else if (valueName.Equals("--logger", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    string[] settingParts = value.Split("::".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                    string[] settingParts = value.Split(new []{ "::" }, StringSplitOptions.RemoveEmptyEntries);
                     string connectionName = settingParts.FirstOrDefault();
                     string subTarget = settingParts.Length == 2 ? settingParts[1] : null;
 
