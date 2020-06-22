@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CellReferenceTests.cs" />
+    <Compile Include="FileDemandTests.cs" />
     <Compile Include="DelimitedFileAdapterTests.cs" />
     <Compile Include="FileDataTableAdapterTests.cs" />
     <Compile Include="FileRowTests.cs" />
