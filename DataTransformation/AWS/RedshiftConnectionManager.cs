@@ -25,6 +25,11 @@ namespace Betlln.Data.Integration.AWS
             return connection;
         }
 
+        public Type GetDataAdapterType()
+        {
+            return typeof(NpgsqlDataAdapter);
+        }
+
         public string ServerName { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }

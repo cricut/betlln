@@ -14,6 +14,11 @@ namespace Betlln.Data.Integration.SqlServer
             return connection;
         }
 
+        public Type GetDataAdapterType()
+        {
+            return typeof(SqlDataAdapter);
+        }
+
         public string ServerName { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }

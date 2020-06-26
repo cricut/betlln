@@ -15,6 +15,11 @@ namespace Betlln.Data.Integration.Mongo
             return new Wrapper(database);
         }
 
+        public Type GetDataAdapterType()
+        {
+            throw new NotSupportedException();
+        }
+
         public string Host { get; set; }
         public string Database { get; set; }
         public string UserName { get; set; }

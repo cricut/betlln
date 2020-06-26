@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 
-namespace Betlln.Data.Integration.SqlServer
+namespace Betlln.Data.Integration.Core
 {
     public class ParameterSet : Dictionary<string, object>
     {

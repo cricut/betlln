@@ -134,6 +134,7 @@
     <Compile Include="Office\ExcelSheetDirective.cs" />
     <Compile Include="Office\ExcelWorkbookConverter.cs" />
     <Compile Include="IDatabaseConnection.cs" />
+    <Compile Include="Core\DbDataSource.cs" />
     <Compile Include="SqlServer\MultiExecuteSqlTask.cs" />
     <Compile Include="SqlServer\RecordReader.cs" />
     <Compile Include="SqlServer\TableMetaDataCache.cs" />
@@ -144,7 +145,7 @@
     <Compile Include="Json\JsonProperty.cs" />
     <Compile Include="AWS\S3ConnectionManager.cs" />
     <Compile Include="Collections\ListOf.cs" />
-    <Compile Include="SqlServer\ParameterSet.cs" />
+    <Compile Include="Core\ParameterSet.cs" />
     <Compile Include="DataElementPairing.cs" />
     <Compile Include="Dts.cs" />
     <Compile Include="ExtensionMethods.cs" />
@@ -162,14 +163,14 @@
     <Compile Include="Process\ExecuteProcessTask.cs" />
     <Compile Include="SqlServer\ExecuteSqlCommandTask.cs" />
     <Compile Include="Core\DataSource.cs" />
-    <Compile Include="SqlServer\ISqlActivity.cs" />
+    <Compile Include="Core\ISqlActivity.cs" />
     <Compile Include="SqlServer\SqlBulkCopyTask.cs" />
     <Compile Include="SqlServer\SqlDataSource.cs" />
     <Compile Include="Core\StaticBinder.cs" />
     <Compile Include="Core\Task.cs" />
     <Compile Include="Core\Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SqlServer\SqlActivityExtensionMethods.cs" />
+    <Compile Include="Core\DbActivityExtensionMethods.cs" />
     <Compile Include="SqlServer\SqlConnectionManager.cs" />
     <Compile Include="SystemVariables.cs" />
   </ItemGroup>

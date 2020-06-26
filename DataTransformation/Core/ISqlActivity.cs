@@ -1,6 +1,4 @@
-﻿using Betlln.Data.Integration.Core;
-
-namespace Betlln.Data.Integration.SqlServer
+﻿namespace Betlln.Data.Integration.Core
 {
     public interface ISqlActivity
     {
