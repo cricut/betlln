@@ -68,7 +68,7 @@ namespace Betlln.Data.Integration
                 if (sourceColumn.DataType != columnMapping.ElementType)
                 {
                     throw new InvalidCastException(
-                        $"Cannot convert {sourceColumn.DataType.Name} to {columnMapping.ElementType.Name} ({sourceDataTable.TableName}.{sourceColumn.ColumnName})");
+                        $"Cannot convert {sourceColumn.DataType.Name} to {columnMapping.ElementType.Name} ({sourceColumn.ColumnName})");
                 }
                 convertedDataTable.Columns.Add(new DataColumn(columnMapping.DestinationName, columnMapping.ElementType));
             }
