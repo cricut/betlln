@@ -7,6 +7,7 @@ namespace Betlln.Data.Integration.AWS
     {
         internal RedshiftDataSource()
         {
+            Timeout = 30;
             _commandType = CommandType.Text;
         }
 

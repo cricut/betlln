@@ -42,7 +42,7 @@ namespace Betlln.Data.Integration.Core
 
         public override DataTable GetResults()
         {
-            DataTable rawDataTable = this.Execute(_commandText, _commandType, dbCommand => GetDataTable(dbCommand));
+            DataTable rawDataTable = this.Execute(_commandText, _commandType, GetDataTable);
             if (_columnMappings.Any())
             {
                 return rawDataTable.RepackageTable(_columnMappings);
