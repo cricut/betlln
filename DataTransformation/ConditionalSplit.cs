@@ -70,6 +70,11 @@ namespace Betlln.Data.Integration
 
         public DataFeed Output(string outputName)
         {
+            if (string.IsNullOrWhiteSpace(outputName))
+            {
+                throw new ArgumentNullException();
+            }
+
             if (string.IsNullOrWhiteSpace(DynamicColumnName) && _realizedStreams.Count == 0)
             {
                 _realizedStreams[DefaultStreamName] = new AsyncFeed { Name = "Default" };
