@@ -76,10 +76,8 @@ namespace Betlln.Data.Integration
 
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
 
             public void Reset()

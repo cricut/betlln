@@ -100,10 +100,7 @@ namespace Betlln.Data.Integration.Core
                 _sqlPipeline.Push(reader);
             }
 
-            private DbDataReader Reader
-            {
-                get { return (DbDataReader)_sqlPipeline.Tip; }
-            }
+            private DbDataReader Reader => (DbDataReader)_sqlPipeline.Tip;
 
             public IEnumerator<DataRecord> GetEnumerator()
             {
@@ -127,11 +124,9 @@ namespace Betlln.Data.Integration.Core
                     Current = record;
                     return true;
                 }
-                else
-                {
-                    Current = null;
-                    return false;
-                }
+
+                Current = null;
+                return false;
             }
 
             private void PopulateRecordFromField(DataRecord record, int fieldIndex)
