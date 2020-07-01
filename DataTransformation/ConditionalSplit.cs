@@ -10,9 +10,9 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Betlln.Data.Integration
 {
-    public class ConditionalSplit : IDisposable
+    public class ConditionalSplit : IConditionalSplit
     {
-        private const string DefaultStreamName = "DEFAULT";
+        internal const string DefaultStreamName = "DEFAULT";
 
         private Task _reader;
         private readonly Dictionary<string, Func<DataRecord, bool>> _namedStreams;

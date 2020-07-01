@@ -101,10 +101,12 @@
     <Compile Include="AWS\RedshiftConnectionManager.cs" />
     <Compile Include="AWS\RedshiftDataSource.cs" />
     <Compile Include="ConditionalSplit.cs" />
+    <Compile Include="ConditionalSplitCached.cs" />
     <Compile Include="Core\NamedStream.cs" />
     <Compile Include="Core\AggregationRole.cs" />
     <Compile Include="FileSystem\CompressedFileConverter.cs" />
     <Compile Include="Core\StreamConverter.cs" />
+    <Compile Include="IConditionalSplit.cs" />
     <Compile Include="Mail\EmailConnectionManager.cs" />
     <Compile Include="FileSystem\CompressFolderTask.cs" />
     <Compile Include="Json\JsonDocumentCollection.cs" />
@@ -135,6 +137,7 @@
     <Compile Include="Office\ExcelWorkbookConverter.cs" />
     <Compile Include="IDatabaseConnection.cs" />
     <Compile Include="Core\DbDataSource.cs" />
+    <Compile Include="Collections\RecordListIterator.cs" />
     <Compile Include="SqlServer\MultiExecuteSqlTask.cs" />
     <Compile Include="SqlServer\RecordReader.cs" />
     <Compile Include="SqlServer\TableMetaDataCache.cs" />
