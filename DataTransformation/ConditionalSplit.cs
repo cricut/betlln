@@ -147,6 +147,7 @@ namespace Betlln.Data.Integration
 
         private AsyncFeed BuildDynamicFeed(string name)
         {
+            Debug.Print($"Realizing stream {name}");
             AsyncFeed dynamicFeed = new AsyncFeed {Name = name};
 
             if (ExcludeDynamicColumnFromOutput)

@@ -167,6 +167,7 @@ namespace Betlln.Data.Integration
                 throw new InvalidOperationException("No package was found to run.");
             }
 
+            Debug.Print("==============");
             Notify.All($"Starting project {ProjectInfo.Name}{Environment.NewLine}{_systemVariables}{Environment.NewLine}{ProjectInfo.Parameters}");
 
             _package.Run();
