@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Betlln.Data.Integration.Collections;
 using Betlln.Data.Integration.Core;
+using Betlln.Logging;
 
 namespace Betlln.Data.Integration
 {
@@ -45,10 +46,18 @@ namespace Betlln.Data.Integration
         {
             EnsureCache();
 
-            return
-                _records.ContainsKey(outputName)
-                    ? new ListDataFeed(_records[outputName])
-                    : ListDataFeed.Empty;
+            if (!_records.ContainsKey(outputName))
+            {
+                if (_namedStreams.Any())
+                {
+                    throw new ArgumentException($"There is not output named '{outputName}'.");
+                }
+
+                Dts.Notify.All($"The output '{outputName}' does not exist.");
+                return ListDataFeed.Empty;
+            }
+
+            return new ListDataFeed(_records[outputName]);
         }
 
         private void EnsureCache()

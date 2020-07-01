@@ -78,7 +78,7 @@ namespace Betlln.Data.Integration
 
             if (string.IsNullOrWhiteSpace(DynamicColumnName) && _realizedStreams.Count == 0)
             {
-                _realizedStreams[DefaultStreamName] = new AsyncFeed { Name = "Default" };
+                _realizedStreams[DefaultStreamName] = new AsyncFeed { Name = DefaultStreamName };
                 foreach (KeyValuePair<string, Func<DataRecord, bool>> streamInfo in _namedStreams)
                 {
                     string streamName = streamInfo.Key;
