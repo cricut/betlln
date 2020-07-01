@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Betlln.Data.Integration.Core;
+using Betlln.Logging;
 using Task = System.Threading.Tasks.Task;
 
 namespace Betlln.Data.Integration
@@ -104,19 +105,26 @@ namespace Betlln.Data.Integration
         
         private void ReadSource()
         {
-            using (IDataRecordIterator reader = Source.GetReader())
+            try
             {
-                foreach (DataRecord record in reader)
+                using (IDataRecordIterator reader = Source.GetReader())
                 {
-                    AsyncFeed targetStream = FindTargetStream(record);
-                    targetStream.Push(record);
+                    foreach (DataRecord record in reader)
+                    {
+                        AsyncFeed targetStream = FindTargetStream(record);
+                        targetStream.Push(record);
+                    }
+                }
+
+                Debug.Print("Finishing streams");
+                foreach (AsyncFeed stream in _realizedStreams.Values)
+                {
+                    stream.Finish();
                 }
             }
-
-            Debug.Print("Finishing streams");
-            foreach (AsyncFeed stream in _realizedStreams.Values)
+            catch (Exception error)
             {
-                stream.Finish();
+                Dts.Notify.All(error.ToString(), LogEventType.Error);
             }
         }
 

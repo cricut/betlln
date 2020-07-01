@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Betlln.Data.Integration.Core;
+using Betlln.Logging;
 
 namespace Betlln.Data.Integration
 {
@@ -61,7 +62,15 @@ namespace Betlln.Data.Integration
                     Debug.Assert(record != null);
                     foreach (KeyValuePair<string, Func<DataRecord, object>> columnSetup in _extraColumns)
                     {
-                        record[columnSetup.Key] = columnSetup.Value(record);
+                        Func<DataRecord, object> calculation = columnSetup.Value;
+                        try
+                        {
+                            record[columnSetup.Key] = calculation(record);
+                        }
+                        catch (Exception error)
+                        {
+                            Dts.Notify.All(error.ToString(), LogEventType.Error);
+                        }
                     }
                     Current = record;
 
