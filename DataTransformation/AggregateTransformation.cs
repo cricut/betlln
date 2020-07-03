@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Betlln.Data.Integration.Collections;
 using Betlln.Data.Integration.Core;
 
 namespace Betlln.Data.Integration
@@ -88,45 +88,6 @@ namespace Betlln.Data.Integration
         private static bool RecordsMatchOnDimensionColumn(DataRecord recordA, DataRecord recordB, DataElementPairing dimensionColumn)
         {
             return Equals(recordA[dimensionColumn.DestinationName], recordB[dimensionColumn.SourceName]);
-        }
-
-        private class RecordListIterator : IDataRecordIterator
-        {
-            private IEnumerator<DataRecord> _enumerator;
-
-            public RecordListIterator(IEnumerable<DataRecord> recordList)
-            {
-                _enumerator = recordList.GetEnumerator();
-            }
-
-            public IEnumerator<DataRecord> GetEnumerator()
-            {
-                return _enumerator;
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
-
-            public bool MoveNext()
-            {
-                return _enumerator.MoveNext();
-            }
-
-            public void Reset()
-            {
-                _enumerator.Reset();
-            }
-
-            public DataRecord Current => _enumerator.Current;
-            object IEnumerator.Current => Current;
-
-            public void Dispose()
-            {
-                _enumerator.Dispose();
-                _enumerator = null;
-            }
         }
     }
 }

@@ -5,7 +5,7 @@ using Betlln.Data.Integration.Core;
 namespace Betlln.Data.Integration.SqlServer
 {
     // ReSharper disable once HollowTypeName
-    public class SqlConnectionManager : IConnectionManager
+    public class SqlConnectionManager : IConnectionManager, IDatabaseConnection
     {
         public IDisposable GetConnection()
         {
@@ -14,7 +14,14 @@ namespace Betlln.Data.Integration.SqlServer
             return connection;
         }
 
+        public Type GetDataAdapterType()
+        {
+            return typeof(SqlDataAdapter);
+        }
+
         public string ServerName { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
         public string DatabaseName { get; set; }
         public string ApplicationName { get; set; }
 

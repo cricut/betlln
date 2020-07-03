@@ -21,6 +21,11 @@ namespace Betlln.Data.Integration.AWS
             return this;
         }
 
+        public Type GetDataAdapterType()
+        {
+            throw new NotSupportedException();
+        }
+
         public string AccessKey { get; set; }
         public string SecretKey { get; set; }
         public RegionEndpoint Endpoint { get; set; }

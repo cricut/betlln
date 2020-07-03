@@ -32,5 +32,10 @@ namespace Betlln.Data.Integration.Mail
             emailHostInfo.SmtpPortNumber = SmtpPortNumber;
             return emailHostInfo;
         }
+
+        public Type GetDataAdapterType()
+        {
+            throw new NotSupportedException();
+        }
     }
 }

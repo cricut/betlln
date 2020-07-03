@@ -5,13 +5,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Betlln.Data.Integration.Core;
+using Betlln.Logging;
 using Task = System.Threading.Tasks.Task;
 
 namespace Betlln.Data.Integration
 {
-    public class ConditionalSplit : IDisposable
+    public class ConditionalSplit : IConditionalSplit
     {
-        private const string DefaultStreamName = "DEFAULT";
+        internal const string DefaultStreamName = "DEFAULT";
 
         private Task _reader;
         private readonly Dictionary<string, Func<DataRecord, bool>> _namedStreams;
@@ -70,9 +71,14 @@ namespace Betlln.Data.Integration
 
         public DataFeed Output(string outputName)
         {
+            if (string.IsNullOrWhiteSpace(outputName))
+            {
+                throw new ArgumentNullException();
+            }
+
             if (string.IsNullOrWhiteSpace(DynamicColumnName) && _realizedStreams.Count == 0)
             {
-                _realizedStreams[DefaultStreamName] = new AsyncFeed { Name = "Default" };
+                _realizedStreams[DefaultStreamName] = new AsyncFeed { Name = DefaultStreamName };
                 foreach (KeyValuePair<string, Func<DataRecord, bool>> streamInfo in _namedStreams)
                 {
                     string streamName = streamInfo.Key;
@@ -99,19 +105,26 @@ namespace Betlln.Data.Integration
         
         private void ReadSource()
         {
-            using (IDataRecordIterator reader = Source.GetReader())
+            try
             {
-                foreach (DataRecord record in reader)
+                using (IDataRecordIterator reader = Source.GetReader())
                 {
-                    AsyncFeed targetStream = FindTargetStream(record);
-                    targetStream.Push(record);
+                    foreach (DataRecord record in reader)
+                    {
+                        AsyncFeed targetStream = FindTargetStream(record);
+                        targetStream.Push(record);
+                    }
+                }
+
+                Debug.Print("Finishing streams");
+                foreach (AsyncFeed stream in _realizedStreams.Values)
+                {
+                    stream.Finish();
                 }
             }
-
-            Debug.Print("Finishing streams");
-            foreach (AsyncFeed stream in _realizedStreams.Values)
+            catch (Exception error)
             {
-                stream.Finish();
+                Dts.Notify.All(error.ToString(), LogEventType.Error);
             }
         }
 
@@ -147,6 +160,7 @@ namespace Betlln.Data.Integration
 
         private AsyncFeed BuildDynamicFeed(string name)
         {
+            Debug.Print($"Realizing stream {name}");
             AsyncFeed dynamicFeed = new AsyncFeed {Name = name};
 
             if (ExcludeDynamicColumnFromOutput)
