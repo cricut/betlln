@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Betlln.IO
@@ -52,19 +53,29 @@ namespace Betlln.IO
             _demandGroups.Last().Add(demand);
         }
 
-        public IEnumerable<FileDemand> RequiredItems
-        {
-            get
-            {
-                return _demandGroups.Count == 1
-                    ? _demandGroups.First()
-                    : new List<FileDemand>();
-            }
-        }
+        public IEnumerable<FileDemand> RequiredItems =>
+            _demandGroups.Count == 1
+                ? _demandGroups.First()
+                : new List<FileDemand>();
 
-        public IEnumerable<IReadOnlyList<FileDemand>> OptionGroups
+        public IEnumerable<IReadOnlyList<FileDemand>> OptionGroups => _demandGroups;
+
+        public bool IsSatisfiedBy(string fileName)
         {
-            get { return _demandGroups; }
+            foreach (List<FileDemand> demandGroup in _demandGroups)
+            {
+                if (demandGroup.Count > 1)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                if (demandGroup.First().IsSatisfiedBy(fileName))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
