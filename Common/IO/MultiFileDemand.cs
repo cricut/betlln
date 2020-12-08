@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Betlln.IO
@@ -60,22 +59,14 @@ namespace Betlln.IO
 
         public IEnumerable<IReadOnlyList<FileDemand>> OptionGroups => _demandGroups;
 
-        public bool IsSatisfiedBy(string fileName)
+        public bool IsSatisfiedBy(string filePath)
         {
-            foreach (List<FileDemand> demandGroup in _demandGroups)
-            {
-                if (demandGroup.Count > 1)
-                {
-                    throw new InvalidOperationException();
-                }
+            return _demandGroups.Any(group => group.All(demand => demand.IsSatisfiedBy(filePath)));
+        }
 
-                if (demandGroup.First().IsSatisfiedBy(fileName))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+        public override string ToString()
+        {
+            return string.Join(" or ", _demandGroups.Select(demandGroup => string.Join(" and ", demandGroup)));
         }
     }
 }

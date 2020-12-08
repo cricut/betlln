@@ -8,6 +8,7 @@ namespace Betlln.IO
         bool CanFindFile(FileDemand demand, string folderPath);
         string FindFile(MultiFileDemand demand, string folderPath);
         string FindFile(FileDemand demand, string folderPath);
+        string FindFile(MultiFileDemand demand, string folderPath, TimeSpan timeout);
         string FindFile(FileDemand demand, string folderPath, TimeSpan timeout);
         bool CanFindAllFiles(MultiFileDemand demand, string folderPath);
         

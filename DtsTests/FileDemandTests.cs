@@ -23,5 +23,14 @@ namespace DtsTests
 
             StringAssert.Contains("66248-*_2019-04-27_USA#.xlsx", actual);
         }
+
+        [Test]
+        public void FileDemandToString_ReturnsPrettyValue_ForStringTolerantRegex()
+        {
+            FileDemand fileDemand = FileDemand.FromPattern(@".+?Pull\s*Reports.+?\.xls(x)?");
+            string actual = fileDemand.ToString();
+
+            StringAssert.Contains("*Pull Reports*.xlsx", actual);
+        }
     }
 }

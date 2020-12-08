@@ -17,7 +17,17 @@ namespace Betlln.IO
 
         public event EventHandler<ProgressChangedEventArgs> ProgressUpdated;
 
+        public string FindFile(MultiFileDemand demand, string folderPath, TimeSpan timeout)
+        {
+            return FindFileWithTimeLimit(() => FindFile(demand, folderPath), timeout);
+        }
+
         public string FindFile(FileDemand demand, string folderPath, TimeSpan timeout)
+        {
+            return FindFileWithTimeLimit(() => FindFile(demand, folderPath), timeout);
+        }
+
+        private string FindFileWithTimeLimit(Func<string> finder, TimeSpan timeout)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -26,8 +36,9 @@ namespace Betlln.IO
             while (stopwatch.Elapsed < timeout && string.IsNullOrWhiteSpace(downloadedFileName))
             {
                 UpdateProgress(0, "Waiting for file download...");
-                downloadedFileName = FindFile(demand, folderPath);
+                downloadedFileName = finder();
             }
+
             stopwatch.Stop();
             UpdateProgress(100, null);
 
@@ -78,21 +89,9 @@ namespace Betlln.IO
 
         public string FindFile(MultiFileDemand demand, string folderPath)
         {
-            foreach (IReadOnlyList<FileDemand> demandGroup in demand.OptionGroups)
-            {
-                if (demandGroup.Count > 1)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                string filePath = FindFile(demandGroup.First(), folderPath);
-                if (!string.IsNullOrWhiteSpace(filePath))
-                {
-                    return filePath;
-                }
-            }
-
-            return null;
+            return demand.OptionGroups
+                            .Select(demandGroup => FindFile(demandGroup.First(), folderPath))
+                            .FirstOrDefault(filePath => !string.IsNullOrWhiteSpace(filePath));
         }
 
         public string FindFile(FileDemand demand, string folderPath)
