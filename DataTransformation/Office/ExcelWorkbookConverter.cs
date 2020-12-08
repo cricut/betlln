@@ -85,21 +85,18 @@ namespace Betlln.Data.Integration.Office
 
         private void WriteToSheet(XLWorkbook workbook, ExcelSheetDirective sheetInfo, DataTable dataTable)
         {
-            using (IXLWorksheet worksheet = workbook.Worksheets.Add(sheetInfo.DestinationSheetName))
+            IXLWorksheet worksheet = workbook.Worksheets.Add(sheetInfo.DestinationSheetName);
+            IXLTable table = CreateFormattedTable(sheetInfo, worksheet, dataTable);
+            foreach (string columnLetter in sheetInfo.CustomColumnLetters)
             {
-                IXLTable table = CreateFormattedTable(sheetInfo, worksheet, dataTable);
+                int columnIndex = (int) (CellReference.GetColumnNumberFromLetter(columnLetter) - 1);
+                string excelColumnName = dataTable.Columns[columnIndex].ColumnName;
 
-                foreach (string columnLetter in sheetInfo.CustomColumnLetters)
+                ExcelColumn columnSettings = sheetInfo.Column(columnLetter);
+                if (columnSettings.TotalFunction.HasValue)
                 {
-                    int columnIndex = (int) (CellReference.GetColumnNumberFromLetter(columnLetter) - 1);
-                    string excelColumnName = dataTable.Columns[columnIndex].ColumnName;
-
-                    ExcelColumn columnSettings = sheetInfo.Column(columnLetter);
-                    if (columnSettings.TotalFunction.HasValue)
-                    {
-                        table.ShowTotalsRow = true;
-                        table.Field(excelColumnName).TotalsRowFunction = columnSettings.TotalFunction.Value;
-                    }
+                    table.ShowTotalsRow = true;
+                    table.Field(excelColumnName).TotalsRowFunction = columnSettings.TotalFunction.Value;
                 }
             }
         }

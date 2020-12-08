@@ -17,7 +17,17 @@ namespace Betlln.IO
 
         public event EventHandler<ProgressChangedEventArgs> ProgressUpdated;
 
+        public string FindFile(MultiFileDemand demand, string folderPath, TimeSpan timeout)
+        {
+            return FindFileWithTimeLimit(() => FindFile(demand, folderPath), timeout);
+        }
+
         public string FindFile(FileDemand demand, string folderPath, TimeSpan timeout)
+        {
+            return FindFileWithTimeLimit(() => FindFile(demand, folderPath), timeout);
+        }
+
+        private string FindFileWithTimeLimit(Func<string> finder, TimeSpan timeout)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -26,8 +36,9 @@ namespace Betlln.IO
             while (stopwatch.Elapsed < timeout && string.IsNullOrWhiteSpace(downloadedFileName))
             {
                 UpdateProgress(0, "Waiting for file download...");
-                downloadedFileName = FindFile(demand, folderPath);
+                downloadedFileName = finder();
             }
+
             stopwatch.Stop();
             UpdateProgress(100, null);
 
@@ -59,6 +70,7 @@ namespace Betlln.IO
             return requiredItems.All(requiredItem => CanFindFile(requiredItem, folderPath));
         }
 
+        [Obsolete("Use" + nameof(FindFile) + " instead.")]
         public string FindDownloadedFile(FileDemand fileDemand, string folderPath, TimeSpan timeout)
         {
             return FindFile(fileDemand, folderPath, timeout);
@@ -73,6 +85,13 @@ namespace Betlln.IO
             }
 
             return !string.IsNullOrWhiteSpace(FindFile(demand, folderPath));
+        }
+
+        public string FindFile(MultiFileDemand demand, string folderPath)
+        {
+            return demand.OptionGroups
+                            .Select(demandGroup => FindFile(demandGroup.First(), folderPath))
+                            .FirstOrDefault(filePath => !string.IsNullOrWhiteSpace(filePath));
         }
 
         public string FindFile(FileDemand demand, string folderPath)

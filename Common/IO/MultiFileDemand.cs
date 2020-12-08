@@ -52,19 +52,21 @@ namespace Betlln.IO
             _demandGroups.Last().Add(demand);
         }
 
-        public IEnumerable<FileDemand> RequiredItems
+        public IEnumerable<FileDemand> RequiredItems =>
+            _demandGroups.Count == 1
+                ? _demandGroups.First()
+                : new List<FileDemand>();
+
+        public IEnumerable<IReadOnlyList<FileDemand>> OptionGroups => _demandGroups;
+
+        public bool IsSatisfiedBy(string filePath)
         {
-            get
-            {
-                return _demandGroups.Count == 1
-                    ? _demandGroups.First()
-                    : new List<FileDemand>();
-            }
+            return _demandGroups.Any(group => group.All(demand => demand.IsSatisfiedBy(filePath)));
         }
 
-        public IEnumerable<IReadOnlyList<FileDemand>> OptionGroups
+        public override string ToString()
         {
-            get { return _demandGroups; }
+            return string.Join(" or ", _demandGroups.Select(demandGroup => string.Join(" and ", demandGroup)));
         }
     }
 }

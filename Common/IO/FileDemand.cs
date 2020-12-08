@@ -146,6 +146,7 @@ namespace Betlln.IO
                 prettyPattern = prettyPattern.Replace(matchAnyAtLeastOnce, "*").Replace(matchAnyOrNone, "*");
             }
 
+            prettyPattern = Regex.Replace(prettyPattern, @"\\s[*]?", " ");
             prettyPattern = Regex.Replace(prettyPattern, @"\(.+?\|.+?\)", "*");
             prettyPattern = Regex.Replace(prettyPattern, @"\\d\{(\d,)?\d\}", "*");
             prettyPattern = prettyPattern.Replace("?", "");
