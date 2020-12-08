@@ -59,6 +59,7 @@ namespace Betlln.IO
             return requiredItems.All(requiredItem => CanFindFile(requiredItem, folderPath));
         }
 
+        [Obsolete("Use" + nameof(FindFile) + " instead.")]
         public string FindDownloadedFile(FileDemand fileDemand, string folderPath, TimeSpan timeout)
         {
             return FindFile(fileDemand, folderPath, timeout);
@@ -73,6 +74,25 @@ namespace Betlln.IO
             }
 
             return !string.IsNullOrWhiteSpace(FindFile(demand, folderPath));
+        }
+
+        public string FindFile(MultiFileDemand demand, string folderPath)
+        {
+            foreach (IReadOnlyList<FileDemand> demandGroup in demand.OptionGroups)
+            {
+                if (demandGroup.Count > 1)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                string filePath = FindFile(demandGroup.First(), folderPath);
+                if (!string.IsNullOrWhiteSpace(filePath))
+                {
+                    return filePath;
+                }
+            }
+
+            return null;
         }
 
         public string FindFile(FileDemand demand, string folderPath)
