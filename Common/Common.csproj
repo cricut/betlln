@@ -97,10 +97,10 @@
       <Version>2.0.12</Version>
     </PackageReference>
     <PackageReference Include="MailKit">
-      <Version>2.11.0</Version>
+      <Version>2.11.1</Version>
     </PackageReference>
     <PackageReference Include="Npgsql">
-      <Version>5.0.3</Version>
+      <Version>5.0.4</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
