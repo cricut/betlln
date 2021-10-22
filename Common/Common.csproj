@@ -1,116 +1,37 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7D2CB321-CA72-4E1D-9B47-01E8FFD4A91E}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Betlln</RootNamespace>
-    <AssemblyName>Common</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Collections\CachedReader.cs" />
-    <Compile Include="Collections\KeyValueBag.cs" />
-    <Compile Include="ConnectionInfo.cs" />
-    <Compile Include="ConsoleScreen.cs" />
-    <Compile Include="Data\DatabaseColumnAttribute.cs" />
-    <Compile Include="Data\File\DataCell.cs" />
-    <Compile Include="Data\File\DelimitedFileAdapter.cs" />
-    <Compile Include="Data\File\DocumentFormatException.cs" />
-    <Compile Include="Data\File\ExcelFileAdapter.cs" />
-    <Compile Include="Data\File\FileAdapterCache.cs" />
-    <Compile Include="Data\File\FileAdapterFactory.cs" />
-    <Compile Include="Data\File\FileDataRow.cs" />
-    <Compile Include="Data\File\FileDataTableAdapter.cs" />
-    <Compile Include="Data\File\FileRow.cs" />
-    <Compile Include="Data\File\IDataFileAdapter.cs" />
-    <Compile Include="Data\File\IFileAdapterFactory.cs" />
-    <Compile Include="Data\File\OpenXmlFileAdapter.cs" />
-    <Compile Include="Data\File\PdfFileAdapter.cs" />
-    <Compile Include="Data\NumberConverter.cs" />
-    <Compile Include="Data\RedshiftDatabaseAdapter.cs" />
-    <Compile Include="Data\SqlDatabaseAdapter.cs" />
-    <Compile Include="IConsoleScreen.cs" />
-    <Compile Include="IO\FileDemand.cs" />
-    <Compile Include="IO\FileFinder.cs" />
-    <Compile Include="IO\FileSystem.cs" />
-    <Compile Include="IO\IFileFinder.cs" />
-    <Compile Include="IO\IFileSystem.cs" />
-    <Compile Include="IO\MultiFileDemand.cs" />
-    <Compile Include="Logging\ApplicationEventLogger.cs" />
-    <Compile Include="Logging\DatabaseLogger.cs" />
-    <Compile Include="Logging\DebugLogger.cs" />
-    <Compile Include="Logging\FileAppendLogger.cs" />
-    <Compile Include="Logging\ILogger.cs" />
-    <Compile Include="Logging\log4netAdapter.cs" />
-    <Compile Include="Logging\LogEntry.cs" />
-    <Compile Include="Logging\LogEventType.cs" />
-    <Compile Include="Logging\Logger.cs" />
-    <Compile Include="Mail\IEmailPorts.cs" />
-    <Compile Include="Mail\IMailClient.cs" />
-    <Compile Include="Mail\MailClient.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ResourceStack.cs" />
-    <Compile Include="RuntimeContext.cs" />
-    <Compile Include="Security\ISecureDataProvider.cs" />
-    <Compile Include="Security\SecureDataProvider.cs" />
-    <Compile Include="Spreadsheets\CellReference.cs" />
-    <Compile Include="SystemExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="BouncyCastle">
-      <Version>1.8.9</Version>
-    </PackageReference>
-    <PackageReference Include="DocumentFormat.OpenXml">
-      <Version>2.13.1</Version>
-    </PackageReference>
-    <PackageReference Include="iTextSharp">
-      <Version>5.5.13.2</Version>
-    </PackageReference>
-    <PackageReference Include="log4net">
-      <Version>2.0.12</Version>
-    </PackageReference>
-    <PackageReference Include="MailKit">
-      <Version>2.15.0</Version>
-    </PackageReference>
-    <PackageReference Include="Npgsql">
-      <Version>5.0.10</Version>
-    </PackageReference>
-    <PackageReference Include="System.Text.Json">
-      <Version>5.0.2</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading.Channels">
-      <Version>5.0.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>Betlln</RootNamespace>
+        <PackageVersion>2.0.0</PackageVersion>
+        <Authors>Nate Irvin, et. al.</Authors>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="DocumentFormat.OpenXml">
+        <Version>2.13.1</Version>
+      </PackageReference>
+      <PackageReference Include="itext7">
+        <Version>7.1.16</Version>
+      </PackageReference>
+      <PackageReference Include="log4net">
+        <Version>2.0.12</Version>
+      </PackageReference>
+      <PackageReference Include="MailKit">
+        <Version>2.15.0</Version>
+      </PackageReference>
+      <PackageReference Include="Npgsql">
+        <Version>5.0.10</Version>
+      </PackageReference>
+      <PackageReference Include="System.Data.OleDb">
+        <Version>5.0.0</Version>
+      </PackageReference>
+      <PackageReference Include="System.Data.SqlClient">
+        <Version>4.8.3</Version>
+      </PackageReference>
+      <PackageReference Include="System.Diagnostics.EventLog">
+        <Version>5.0.1</Version>
+      </PackageReference>
+    </ItemGroup>
+
 </Project>

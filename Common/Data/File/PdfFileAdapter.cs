@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using iTextSharp.text.pdf;
-using iTextSharp.text.pdf.parser;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas.Parser;
+using iText.Kernel.Pdf.Canvas.Parser.Listener;
 
 namespace Betlln.Data.File
 {
@@ -59,11 +60,11 @@ namespace Betlln.Data.File
         {
             StringBuilder documentContent = new StringBuilder();
 
-            using (PdfReader reader = new PdfReader(FilePath))
+            using (var reader = new PdfDocument(new PdfReader(FilePath)))
             {
-                for (int page = 1; page <= reader.NumberOfPages; page++)
+                for (int pageNumber = 1; pageNumber <= reader.GetNumberOfPages(); pageNumber++)
                 {
-                    string pageContent = PdfTextExtractor.GetTextFromPage(reader, page, new SimpleTextExtractionStrategy());
+                    string pageContent = PdfTextExtractor.GetTextFromPage(reader.GetPage(pageNumber), new SimpleTextExtractionStrategy());
                     pageContent = Encoding.UTF8.GetString(Encoding.Convert(Encoding.Default, Encoding.UTF8, Encoding.Default.GetBytes(pageContent)));
                     documentContent.Append(pageContent);
                 }

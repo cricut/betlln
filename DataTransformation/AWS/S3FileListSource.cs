@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Amazon.S3.Model;
 using Betlln.Data.Integration.Core;
+using Task = System.Threading.Tasks.Task;
 
 namespace Betlln.Data.Integration.AWS
 {
@@ -83,7 +84,7 @@ namespace Betlln.Data.Integration.AWS
 
                 if (_fileEnumerator == null)
                 {
-                    GetNextFileBatch();
+                    Task.WaitAll(GetNextFileBatch());
                 }
 
                 if (_fileEnumerator.MoveNext())
@@ -117,7 +118,7 @@ namespace Betlln.Data.Integration.AWS
                 }
             }
 
-            private void GetNextFileBatch()
+            private async Task GetNextFileBatch()
             {
                 ListObjectsV2Request request = new ListObjectsV2Request
                 {
@@ -126,7 +127,7 @@ namespace Betlln.Data.Integration.AWS
                 };
                 request.ContinuationToken = _continuationToken;
 
-                ListObjectsV2Response response = _client.Service.ListObjectsV2(request);
+                ListObjectsV2Response response = await _client.Service.ListObjectsV2Async(request);
 
                 _continuationToken = response.IsTruncated ? response.NextContinuationToken : null;
                 _fileEnumerator = response.S3Objects.GetEnumerator();
