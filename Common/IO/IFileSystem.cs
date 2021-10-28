@@ -8,7 +8,7 @@ namespace Betlln.IO
         bool DoesFileExist(string filePath);
         string GetParentPath(string path);
         List<string> GetFiles(string folder);
-        void SetReadOnly(string filePath);
+        void SetReadOnly(string filePath, bool throwIfUnsupported = true);
         void Copy(string source, string destination, bool overwrite = false);
         void Delete(string path);
         void DeleteAllFilesInFolder(string folderPath);

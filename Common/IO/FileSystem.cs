@@ -29,10 +29,20 @@ namespace Betlln.IO
             return Directory.GetFiles(folder).ToList();
         }
 
-        public void SetReadOnly(string filePath)
+        public void SetReadOnly(string filePath, bool throwIfUnsupported = true)
         {
-            FileInfo fileInfo = new FileInfo(filePath);
-            fileInfo.IsReadOnly = true;
+            try
+            {
+                FileInfo fileInfo = new FileInfo(filePath);
+                fileInfo.IsReadOnly = true;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                if (throwIfUnsupported)
+                {
+                    throw;
+                }
+            }
         }
 
         public void Copy(string source, string destination, bool overwrite = false)

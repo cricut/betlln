@@ -70,5 +70,10 @@ namespace Betlln.IO
         /// Raised when <see cref="FindFile(MultiFileDemand,string,TimeSpan)"/> or <see cref="FindFile(FileDemand,string,TimeSpan)"/> updates the progress of a find.
         /// </summary>
         event EventHandler<ProgressChangedEventArgs> ProgressUpdated;
+
+        /// <summary>
+        /// A reference to the underlying file system that is being searched.
+        /// </summary>
+        IFileSystem FileSystem { get; }
     }
 }

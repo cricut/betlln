@@ -8,13 +8,12 @@ namespace Betlln.IO
 {
     public class FileFinder : IFileFinder
     {
-        private readonly IFileSystem _fileSystem;
-
         public FileFinder(IFileSystem fileSystem)
         {
-            _fileSystem = fileSystem;
+            FileSystem = fileSystem;
         }
 
+        public IFileSystem FileSystem { get; }
         public event EventHandler<ProgressChangedEventArgs> ProgressUpdated;
 
         public string FindFile(MultiFileDemand demand, string folderPath, TimeSpan timeout)
@@ -79,7 +78,7 @@ namespace Betlln.IO
         public bool CanFindFile(FileDemand demand, string folderPath)
         {
             //this block will return true if demand.ImplicitFileName is a full path and we don't need to search the folder
-            if (_fileSystem.DoesFileExist(demand.ImplicitFileName))
+            if (FileSystem.DoesFileExist(demand.ImplicitFileName))
             {
                 return true;
             }
@@ -96,7 +95,7 @@ namespace Betlln.IO
 
         public string FindFile(FileDemand demand, string folderPath)
         {
-            return _fileSystem.GetFiles(folderPath).FirstOrDefault(demand.IsSatisfiedBy);
+            return FileSystem.GetFiles(folderPath).FirstOrDefault(demand.IsSatisfiedBy);
         }
     }
 }
