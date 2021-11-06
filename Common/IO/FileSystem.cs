@@ -70,7 +70,7 @@ namespace Betlln.IO
         }
 
         // ReSharper disable once TooManyArguments
-        public FileStream OpenStream(string path, FileMode streamMode, FileAccess accessMode, FileShare shareMode)
+        public Stream OpenStream(string path, FileMode streamMode, FileAccess accessMode, FileShare shareMode)
         {
             return File.Open(path, streamMode, accessMode, shareMode);
         }

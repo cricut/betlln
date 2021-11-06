@@ -14,7 +14,7 @@ namespace Betlln.IO
         void DeleteAllFilesInFolder(string folderPath);
 
         // ReSharper disable once TooManyArguments
-        FileStream OpenStream(string path, FileMode streamMode, FileAccess accessMode, FileShare shareMode);
+        Stream OpenStream(string path, FileMode streamMode, FileAccess accessMode, FileShare shareMode);
 
         void Unblock(string fileName);
         void Rename(string currentPath, string newPath);
