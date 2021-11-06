@@ -12,11 +12,24 @@ namespace Betlln.Data
         protected SqlDatabaseAdapter(ConnectionInfo connectionInfo) 
             : base(connectionInfo)
         {
+            SetApplicationName();
         }
 
         protected SqlDatabaseAdapter(string connectionName) 
             : base(connectionName)
         {
+            SetApplicationName();
+        }
+
+        private void SetApplicationName()
+        {
+            SqlConnectionStringBuilder addressBuilder = new SqlConnectionStringBuilder(ConnectionAddress);
+            if (string.IsNullOrWhiteSpace(addressBuilder.ApplicationName))
+            {
+                addressBuilder.ApplicationName = RuntimeContext.ApplicationAndVersion;
+            }
+
+            ConnectionAddress = addressBuilder.ToString();
         }
 
         protected override string BuildConnectionAddressFrom(ConnectionInfo connectionInfo)
