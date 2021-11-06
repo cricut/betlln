@@ -3,28 +3,33 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace Betlln.Data
 {
-    public abstract class SqlDatabaseAdapter : IDisposable
+    public abstract class SqlDatabaseAdapter : DatabaseAdapter, IDisposable
     {
-        protected SqlDatabaseAdapter(string connectionName)
+        protected SqlDatabaseAdapter(ConnectionInfo connectionInfo) 
+            : base(connectionInfo)
         {
-            ConnectionAddress = GetConnectionAddressByName(connectionName);
         }
 
-        internal static string GetConnectionAddressByName(string connectionName)
+        protected SqlDatabaseAdapter(string connectionName) 
+            : base(connectionName)
         {
-            string connectionAddress = ConfigurationManager.ConnectionStrings[connectionName].ConnectionString;
-            SqlConnectionStringBuilder addressBuilder = new SqlConnectionStringBuilder(connectionAddress);
-            if (string.IsNullOrWhiteSpace(addressBuilder.ApplicationName))
-            {
-                addressBuilder.ApplicationName = RuntimeContext.ApplicationAndVersion;
-            }
-            return addressBuilder.ToString();
         }
 
-        protected string ConnectionAddress { get; }
+        protected override string BuildConnectionAddressFrom(ConnectionInfo connectionInfo)
+        {
+            SqlConnectionStringBuilder connectionStringBuilder = new SqlConnectionStringBuilder();
+            connectionStringBuilder.DataSource = connectionInfo.Destination;
+            connectionStringBuilder.InitialCatalog = connectionInfo.SubSectionName;
+            connectionStringBuilder.UserID = connectionInfo.User;
+            connectionStringBuilder.Password = connectionInfo.Password;
+            connectionStringBuilder.ApplicationName = RuntimeContext.ApplicationAndVersion;
+            return connectionStringBuilder.ToString();
+        }
+        
         public SqlTransaction Transaction { get; private set; }
 
         public void BeginTransaction()
@@ -105,6 +110,29 @@ namespace Betlln.Data
                     return action(command);
                 }
             }
+        }
+        
+        protected async Task<List<T>> ExecuteDirectQueryAsync<T>(string query, Func<IDataRecord, T> builder)
+        {
+            List<T> list = new List<T>();
+
+            await using (SqlConnection connection = new SqlConnection(ConnectionAddress))
+            {
+                await using (SqlCommand command = connection.CreateCommand())
+                {
+                    command.CommandText = query;
+                    await command.Connection.OpenAsync();
+                    await using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            list.Add(builder(reader));
+                        }
+                    }
+                }
+            }
+
+            return list;
         }
 
         protected static T? ReadNullableValue<T>(IDataReader reader, string columnName)

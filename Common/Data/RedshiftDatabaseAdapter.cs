@@ -7,19 +7,17 @@ using System.Threading.Tasks;
 
 namespace Betlln.Data
 {
-    public abstract class RedshiftDatabaseAdapter
+    public abstract class RedshiftDatabaseAdapter : DatabaseAdapter
     {
-        protected RedshiftDatabaseAdapter(string connectionName)
+        protected RedshiftDatabaseAdapter(ConnectionInfo dataSourceInfo)
+             : base(dataSourceInfo)
         {
-            ConnectionAddress = GetConnectionAddressByName(connectionName);
         }
 
-        internal static string GetConnectionAddressByName(string connectionName)
+        protected override string BuildConnectionAddressFrom(ConnectionInfo connectionInfo)
         {
-            return ConfigurationManager.ConnectionStrings[connectionName].ConnectionString;
+            return $"Host={connectionInfo.Destination};Port=5439;User={connectionInfo.User};Password={connectionInfo.Password}Database={connectionInfo.SubSectionName}";
         }
-
-        protected string ConnectionAddress { get; }
 
         protected static DataTable BuildDataTable(NpgsqlCommand command)
         {
