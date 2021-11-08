@@ -108,21 +108,6 @@ namespace Betlln.Data
             }
         }
 
-        protected static T? ReadNullableValue<T>(IDataReader reader, string columnName)
-            where T : struct
-        {
-            return (T?)(reader.IsDBNull(reader.GetOrdinal(columnName))
-                ? null
-                : reader[columnName]);
-        }
-
-        protected static string ReadString(IDataReader reader, string columnName)
-        {
-            return reader.IsDBNull(reader.GetOrdinal(columnName))
-                ? null
-                : reader[columnName].ToString();
-        }
-
         public static NpgsqlConnection OpenDatabaseConnection(string connectionName)
         {
             var connectionSettings = ConfigurationManager.ConnectionStrings[connectionName];

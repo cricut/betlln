@@ -149,21 +149,6 @@ namespace Betlln.Data
             return list;
         }
 
-        protected static T? ReadNullableValue<T>(IDataReader reader, string columnName)
-            where T : struct 
-        {
-            return (T?) (reader.IsDBNull(reader.GetOrdinal(columnName))
-                ? null
-                : reader[columnName]);
-        }
-
-        protected static string ReadString(IDataReader reader, string columnName)
-        {
-            return reader.IsDBNull(reader.GetOrdinal(columnName))
-                ? null
-                : reader[columnName].ToString();
-        }
-
         protected SqlConnection OpenDatabaseConnection()
         {
             if (Transaction != null)
