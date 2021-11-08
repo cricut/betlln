@@ -89,7 +89,7 @@ namespace Betlln
             return weekStart.AddWeek().AddSeconds(-1);
         }
 
-        public static string GetFileExtension(string filePath)
+        public static string GetFileExtension(this string filePath)
         {
             string extension = Path.GetExtension(filePath) ?? string.Empty;
             if (extension.FirstOrDefault() == '.')

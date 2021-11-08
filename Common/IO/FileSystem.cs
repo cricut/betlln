@@ -7,8 +7,14 @@ using System.Text;
 
 namespace Betlln.IO
 {
+    [Obsolete("Use " + nameof(LocalFileSystem))]
     public class FileSystem : IFileSystem
     {
+        public bool IsValidPath(string filePath)
+        {
+            return LocalFileSystem.IsValidPath(filePath);
+        }
+
         public bool DoesFileExist(string filePath)
         {
             return File.Exists(filePath);

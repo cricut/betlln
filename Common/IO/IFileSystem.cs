@@ -5,6 +5,7 @@ namespace Betlln.IO
 {
     public interface IFileSystem
     {
+        bool IsValidPath(string filePath);
         bool DoesFileExist(string filePath);
         string GetParentPath(string path);
         List<string> GetFiles(string folder);
