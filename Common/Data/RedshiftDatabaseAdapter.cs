@@ -16,7 +16,7 @@ namespace Betlln.Data
 
         protected override string BuildConnectionAddressFrom(ConnectionInfo connectionInfo)
         {
-            return $"Host={connectionInfo.Destination};Port=5439;User={connectionInfo.User};Password={connectionInfo.Password}Database={connectionInfo.SubSectionName}";
+            return $"Host={connectionInfo.Destination};Port=5439;Username={connectionInfo.User};Password={connectionInfo.Password};Database={connectionInfo.SubSectionName}";
         }
 
         protected static DataTable BuildDataTable(NpgsqlCommand command)
