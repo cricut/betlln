@@ -40,6 +40,7 @@ namespace Betlln.Data
             connectionStringBuilder.UserID = connectionInfo.User;
             connectionStringBuilder.Password = connectionInfo.Password;
             connectionStringBuilder.ApplicationName = RuntimeContext.ApplicationAndVersion;
+            connectionStringBuilder.ConnectTimeout = 30;
             return connectionStringBuilder.ToString();
         }
         
