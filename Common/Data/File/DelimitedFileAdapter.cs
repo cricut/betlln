@@ -128,7 +128,6 @@ namespace Betlln.Data.File
 
             public void Dispose()
             {
-                _parser.Dispose();
                 _rowData = null;
             }
         }

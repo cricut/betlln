@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace Betlln.Data
 {
@@ -44,10 +45,30 @@ namespace Betlln.Data
 
             return list;
         }
+        
+        private static async Task<List<T>> BuildObjectListAsync<T>(NpgsqlCommand command, Func<IDataReader, Task<T>> objectBuilder)
+        {
+            List<T> list = new List<T>();
+
+            await using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
+                {
+                    list.Add(await objectBuilder(reader));
+                }
+            }
+
+            return list;
+        }
 
         protected List<T> ExecuteQueryByString<T>(string sqlAsString, Func<IDataReader, T> objectBuilder)
         {
             return ExecuteQuery(ConnectionAddress, sqlAsString, command => BuildObjectList(command, objectBuilder));
+        }
+        
+        protected async Task<List<T>> ExecuteQueryByStringAsync<T>(string sqlAsString, Func<IDataReader, Task<T>> objectBuilder)
+        {
+            return await ExecuteQueryAsync(ConnectionAddress, sqlAsString, command => BuildObjectListAsync(command, objectBuilder));
         }
 
         public void ExecuteNonQueryByString(string sqlAsString)
@@ -68,6 +89,23 @@ namespace Betlln.Data
                     connection.Open();
 
                     return action(command);
+                }
+            }
+        }
+        
+        // ReSharper disable once TooManyArguments
+        private static async Task<T> ExecuteQueryAsync<T>(string connectionAddress, string sqlAsString, Func<NpgsqlCommand, Task<T>> action)
+        {
+            await using (var connection = new NpgsqlConnection(connectionAddress))
+            {
+                await using (NpgsqlCommand command = connection.CreateCommand())
+                {
+                    command.CommandText = sqlAsString;
+                    command.CommandType = CommandType.Text;
+
+                    await connection.OpenAsync();
+
+                    return await action(command);
                 }
             }
         }

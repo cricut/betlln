@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTransformation", "DataTransformation\DataTransformation.csproj", "{D33B6FF7-D5BD-47A8-8E9A-8ACD234DB15F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DtsTests", "DtsTests\DtsTests.csproj", "{249C666A-ED29-4DB2-8165-02F1FAD7AF8E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetllnTests", "BetllnTests\BetllnTests.csproj", "{64E98534-D47E-4BBD-96D6-E724895CEF10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,13 +31,14 @@ Global
 		{D33B6FF7-D5BD-47A8-8E9A-8ACD234DB15F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D33B6FF7-D5BD-47A8-8E9A-8ACD234DB15F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D33B6FF7-D5BD-47A8-8E9A-8ACD234DB15F}.SQLOnly|Any CPU.ActiveCfg = Debug|Any CPU
-		{249C666A-ED29-4DB2-8165-02F1FAD7AF8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{249C666A-ED29-4DB2-8165-02F1FAD7AF8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{249C666A-ED29-4DB2-8165-02F1FAD7AF8E}.Development|Any CPU.ActiveCfg = Debug|Any CPU
-		{249C666A-ED29-4DB2-8165-02F1FAD7AF8E}.Development|Any CPU.Build.0 = Debug|Any CPU
-		{249C666A-ED29-4DB2-8165-02F1FAD7AF8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{249C666A-ED29-4DB2-8165-02F1FAD7AF8E}.SQLOnly|Any CPU.ActiveCfg = Release|Any CPU
-		{249C666A-ED29-4DB2-8165-02F1FAD7AF8E}.SQLOnly|Any CPU.Build.0 = Release|Any CPU
+		{64E98534-D47E-4BBD-96D6-E724895CEF10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64E98534-D47E-4BBD-96D6-E724895CEF10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64E98534-D47E-4BBD-96D6-E724895CEF10}.Development|Any CPU.ActiveCfg = Debug|Any CPU
+		{64E98534-D47E-4BBD-96D6-E724895CEF10}.Development|Any CPU.Build.0 = Debug|Any CPU
+		{64E98534-D47E-4BBD-96D6-E724895CEF10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64E98534-D47E-4BBD-96D6-E724895CEF10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64E98534-D47E-4BBD-96D6-E724895CEF10}.SQLOnly|Any CPU.ActiveCfg = Debug|Any CPU
+		{64E98534-D47E-4BBD-96D6-E724895CEF10}.SQLOnly|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

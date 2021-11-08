@@ -2,8 +2,10 @@
 using System.IO;
 using System.Linq;
 using Betlln.Data.Integration.Json;
-using DtsTests.Properties;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources;
 using NUnit.Framework;
+using JsonDocument = Betlln.Data.Integration.Json.JsonDocument;
+using JsonProperty = Betlln.Data.Integration.Json.JsonProperty;
 
 namespace DtsTests
 {
@@ -15,7 +17,7 @@ namespace DtsTests
         {
             Assert.Throws<FormatException>(() =>
             {
-                using (ResourceReader tester = new ResourceReader(Resources.BadEncodingFileExample))
+                using (ResourceReader tester = new ResourceReader(BetllnTests.Properties.Resources.BadEncodingFileExample))
                 {
                     int actualCount = tester.Count();
                     Assert.AreEqual(3201, actualCount);
@@ -115,7 +117,7 @@ namespace DtsTests
         {
             string rawContent;
 
-            using (MemoryStream fileContents = new MemoryStream(Resources.SingleExample))
+            using (MemoryStream fileContents = new MemoryStream(BetllnTests.Properties.Resources.SingleExample))
             {
                 using (StreamReader reader = new StreamReader(fileContents))
                 {

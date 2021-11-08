@@ -1,206 +1,43 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D33B6FF7-D5BD-47A8-8E9A-8ACD234DB15F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Betlln.Data.Integration</RootNamespace>
-    <AssemblyName>dtslib</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AggregateTransformation.cs" />
-    <Compile Include="AWS\DownloadS3FolderTask.cs" />
-    <Compile Include="AWS\IS3Client.cs" />
-    <Compile Include="AWS\IS3FolderSource.cs" />
-    <Compile Include="AsyncFeed.cs" />
-    <Compile Include="AWS\RedshiftConnectionManager.cs" />
-    <Compile Include="AWS\RedshiftDataSource.cs" />
-    <Compile Include="ConditionalSplit.cs" />
-    <Compile Include="ConditionalSplitCached.cs" />
-    <Compile Include="Core\NamedStream.cs" />
-    <Compile Include="Core\AggregationRole.cs" />
-    <Compile Include="FileSystem\CompressedFileConverter.cs" />
-    <Compile Include="Core\StreamConverter.cs" />
-    <Compile Include="IConditionalSplit.cs" />
-    <Compile Include="Mail\EmailConnectionManager.cs" />
-    <Compile Include="FileSystem\CompressFolderTask.cs" />
-    <Compile Include="Json\JsonDocumentCollection.cs" />
-    <Compile Include="Json\JsonFileDocumentCollection.cs" />
-    <Compile Include="AWS\S3FileListSource.cs" />
-    <Compile Include="AWS\S3JsonFileSource.cs" />
-    <Compile Include="Collections\DataTableRecordIterator.cs" />
-    <Compile Include="Core\Binder.cs" />
-    <Compile Include="Core\IDataRecordIterator.cs" />
-    <Compile Include="Core\ColumnInfo.cs" />
-    <Compile Include="Core\DataRecord.cs" />
-    <Compile Include="AWS\S3JsonFileDocumentCollection.cs" />
-    <Compile Include="Core\ProjectInfo.cs" />
-    <Compile Include="Core\Notify.cs" />
-    <Compile Include="Core\PropertyBinder.cs" />
-    <Compile Include="DerivedColumnTransformation.cs" />
-    <Compile Include="Disunion.cs" />
-    <Compile Include="Mail\EmailHostInfo.cs" />
-    <Compile Include="Mail\EmailSender.cs" />
-    <Compile Include="Mail\IEmailSender.cs" />
-    <Compile Include="MetaDataFeed.cs" />
-    <Compile Include="Mongo\IMongoDB.cs" />
-    <Compile Include="Office\ExcelFormats.cs" />
-    <Compile Include="Office\ExcelColumn.cs" />
-    <Compile Include="Office\ExcelWorkbookDestination.cs" />
-    <Compile Include="Mail\SendEmailTask.cs" />
-    <Compile Include="Office\ExcelSheetDirective.cs" />
-    <Compile Include="Office\ExcelWorkbookConverter.cs" />
-    <Compile Include="IDatabaseConnection.cs" />
-    <Compile Include="Core\DbDataSource.cs" />
-    <Compile Include="Collections\RecordListIterator.cs" />
-    <Compile Include="SqlServer\MultiExecuteSqlTask.cs" />
-    <Compile Include="SqlServer\RecordReader.cs" />
-    <Compile Include="SqlServer\TableMetaDataCache.cs" />
-    <Compile Include="Union.cs" />
-    <Compile Include="Unpivot.cs" />
-    <Compile Include="Core\DataFeed.cs" />
-    <Compile Include="Json\JsonDocument.cs" />
-    <Compile Include="Json\JsonProperty.cs" />
-    <Compile Include="AWS\S3ConnectionManager.cs" />
-    <Compile Include="Collections\ListOf.cs" />
-    <Compile Include="Core\ParameterSet.cs" />
-    <Compile Include="DataElementPairing.cs" />
-    <Compile Include="Dts.cs" />
-    <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="FileSystem\DecompressFileTask.cs" />
-    <Compile Include="FileSystem\DeleteFolderContentsTask.cs" />
-    <Compile Include="FileSystem\MoveFileTask.cs" />
-    <Compile Include="Core\IConnectionManager.cs" />
-    <Compile Include="Mongo\BsonExtensionMethods.cs" />
-    <Compile Include="Core\IColumnMapper.cs" />
-    <Compile Include="Mongo\MongoCollectionCommand.cs" />
-    <Compile Include="Mongo\MongoCollectionCommandTask.cs" />
-    <Compile Include="Mongo\MongoConnectionManager.cs" />
-    <Compile Include="Mongo\MongoCursor.cs" />
-    <Compile Include="Mongo\MongoDataSource.cs" />
-    <Compile Include="Process\ExecuteProcessTask.cs" />
-    <Compile Include="SqlServer\ExecuteSqlCommandTask.cs" />
-    <Compile Include="Core\DataSource.cs" />
-    <Compile Include="Core\ISqlActivity.cs" />
-    <Compile Include="SqlServer\SqlBulkCopyTask.cs" />
-    <Compile Include="SqlServer\SqlDataSource.cs" />
-    <Compile Include="Core\StaticBinder.cs" />
-    <Compile Include="Core\Task.cs" />
-    <Compile Include="Core\Package.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\DbActivityExtensionMethods.cs" />
-    <Compile Include="SqlServer\SqlConnectionManager.cs" />
-    <Compile Include="SystemVariables.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{23eaf8b0-2cf4-4264-a9b2-14e2c5ea5678}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\protect_config.bat">
-      <Link>protect_config.bat</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="AWSSDK.S3">
-      <Version>3.7.3.4</Version>
-    </PackageReference>
-    <PackageReference Include="BouncyCastle">
-      <Version>1.8.9</Version>
-    </PackageReference>
-    <PackageReference Include="ClosedXML">
-      <Version>0.95.4</Version>
-    </PackageReference>
-    <PackageReference Include="DnsClient">
-      <Version>1.5.0</Version>
-    </PackageReference>
-    <PackageReference Include="DocumentFormat.OpenXml">
-      <Version>2.13.1</Version>
-    </PackageReference>
-    <PackageReference Include="ExcelNumberFormat">
-      <Version>1.1.0</Version>
-    </PackageReference>
-    <PackageReference Include="MailKit">
-      <Version>2.15.0</Version>
-    </PackageReference>
-    <PackageReference Include="MimeKit">
-      <Version>2.15.1</Version>
-    </PackageReference>
-    <PackageReference Include="MongoDB.Driver">
-      <Version>2.13.1</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="Npgsql">
-      <Version>5.0.10</Version>
-    </PackageReference>
-    <PackageReference Include="SharpCompress">
-      <Version>0.29.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.IO.Packaging">
-      <Version>5.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Security.Cryptography.Algorithms">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Security.Cryptography.X509Certificates">
-      <Version>4.3.2</Version>
-    </PackageReference>
-    <PackageReference Include="System.Text.Json">
-      <Version>5.0.2</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading.Channels">
-      <Version>5.0.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>Betlln.Data.Integration</RootNamespace>
+        <AssemblyName>dtslib</AssemblyName>
+        <PackageId>DataTransformation</PackageId>
+        <Authors>Nate Irvin, et. al.</Authors>
+        <PackageVersion>2.0.0</PackageVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AWSSDK.S3">
+        <Version>3.7.3.16</Version>
+      </PackageReference>
+      <PackageReference Include="ClosedXML">
+        <Version>0.95.4</Version>
+      </PackageReference>
+      <PackageReference Include="Microsoft.Win32.SystemEvents">
+        <Version>5.0.0</Version>
+      </PackageReference>
+      <PackageReference Include="MongoDB.Bson">
+        <Version>2.13.2</Version>
+      </PackageReference>
+      <PackageReference Include="MongoDB.Driver">
+        <Version>2.13.2</Version>
+      </PackageReference>
+      <PackageReference Include="Npgsql">
+        <Version>5.0.10</Version>
+      </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Common\Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\protect_config.bat">
+        <Link>protect_config.bat</Link>
+      </Content>
+    </ItemGroup>
+
 </Project>

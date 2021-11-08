@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.IO.Compression;
+using System.Threading.Tasks;
 using Amazon.S3.Model;
 using Betlln.Data.Integration.Json;
 
@@ -21,7 +22,9 @@ namespace Betlln.Data.Integration.AWS
             IS3Client client = (IS3Client) ConnectionManager.GetConnection();
             _readPipeline.Push(client);
 
-            GetObjectResponse apiResponse = client.Service.GetObject(S3Object.BucketName, S3Object.Key);
+            Task<GetObjectResponse> getTask = client.Service.GetObjectAsync(S3Object.BucketName, S3Object.Key);
+            Task.WaitAll(getTask);
+            GetObjectResponse apiResponse = getTask.Result;
             _readPipeline.Push(apiResponse);
 
             Stream responseStream = apiResponse.ResponseStream;
