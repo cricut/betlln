@@ -7,19 +7,17 @@ using System.Threading.Tasks;
 
 namespace Betlln.Data
 {
-    public abstract class RedshiftDatabaseAdapter
+    public abstract class RedshiftDatabaseAdapter : DatabaseAdapter
     {
-        protected RedshiftDatabaseAdapter(string connectionName)
+        protected RedshiftDatabaseAdapter(ConnectionInfo dataSourceInfo)
+             : base(dataSourceInfo)
         {
-            ConnectionAddress = GetConnectionAddressByName(connectionName);
         }
 
-        internal static string GetConnectionAddressByName(string connectionName)
+        protected override string BuildConnectionAddressFrom(ConnectionInfo connectionInfo)
         {
-            return ConfigurationManager.ConnectionStrings[connectionName].ConnectionString;
+            return $"Host={connectionInfo.Destination};Port=5439;Username={connectionInfo.User};Password={connectionInfo.Password};Database={connectionInfo.SubSectionName}";
         }
-
-        protected string ConnectionAddress { get; }
 
         protected static DataTable BuildDataTable(NpgsqlCommand command)
         {
@@ -108,21 +106,6 @@ namespace Betlln.Data
                     return await action(command);
                 }
             }
-        }
-
-        protected static T? ReadNullableValue<T>(IDataReader reader, string columnName)
-            where T : struct
-        {
-            return (T?)(reader.IsDBNull(reader.GetOrdinal(columnName))
-                ? null
-                : reader[columnName]);
-        }
-
-        protected static string ReadString(IDataReader reader, string columnName)
-        {
-            return reader.IsDBNull(reader.GetOrdinal(columnName))
-                ? null
-                : reader[columnName].ToString();
         }
 
         public static NpgsqlConnection OpenDatabaseConnection(string connectionName)

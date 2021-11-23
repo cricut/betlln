@@ -16,7 +16,7 @@ namespace DtsTests
             string fileName = Path.Combine(Directory.GetParent(GetType().Assembly.Location).FullName, "sample.xlsm");
 
             object cellK28Value;
-            using (IDataFileAdapter dataFileAdapter = fileAdapterFactory.GetFileAdapter(fileName, useCached: false))
+            using (IDataFileAdapter dataFileAdapter = fileAdapterFactory.GetFileAdapter(fileName))
             {
                 FileRow row28 = dataFileAdapter.PlainData.FirstOrDefault(x => x.RowNumber == 28);
                 DataCell cellK28 = row28.Cells.FirstOrDefault(y => y.ColumnNumber == CellReference.GetColumnNumberFromLetter("K"));

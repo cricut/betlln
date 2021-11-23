@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Betlln.IO;
 
 namespace Betlln.Data.File
 {
@@ -13,16 +14,16 @@ namespace Betlln.Data.File
             AppDomain.CurrentDomain.DomainUnload += StaticDispose;
             AppDomain.CurrentDomain.ProcessExit += StaticDispose;
         }
+
+        public FileAdapterFactory(IFileSystem fileSystem = null)
+        {
+            FileSystem = fileSystem;
+        }
+
+        protected IFileSystem FileSystem { get; set; }
         
         /// <inheritdoc />
         public IDataFileAdapter GetFileAdapter(string filePath)
-        {
-            return GetFileAdapter(filePath, true);
-        }
-
-        /// <inheritdoc />
-        [Obsolete("Use GetFileAdapter(string filePath) instead.")]
-        public IDataFileAdapter GetFileAdapter(string filePath, bool useCached)
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
@@ -45,9 +46,24 @@ namespace Betlln.Data.File
             return adapter;
         }
 
-        private static IDataFileAdapter GetBaseAdapter(string filePath)
+        /// <inheritdoc />
+        [Obsolete("Use GetFileAdapter(string filePath) instead.")]
+        public IDataFileAdapter GetFileAdapter(string filePath, bool useCached)
         {
-            string fileExtension = SystemExtensions.GetFileExtension(filePath);
+            return GetFileAdapter(filePath);
+        }
+
+        private IDataFileAdapter GetBaseAdapter(string filePath)
+        {
+            string fileExtension = filePath.GetFileExtension();
+
+            if (!LocalFileSystem.IsValidPath(filePath))
+            {
+                string tempFilePath = LocalFileSystem.GetTempFile() + "." + fileExtension;
+                FileSystem.Copy(filePath, tempFilePath);
+                filePath = tempFilePath;
+            }
+            
             switch (fileExtension)
             {
                 case "pdf":

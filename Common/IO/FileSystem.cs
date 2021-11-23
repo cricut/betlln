@@ -7,8 +7,14 @@ using System.Text;
 
 namespace Betlln.IO
 {
+    [Obsolete("Use " + nameof(LocalFileSystem))]
     public class FileSystem : IFileSystem
     {
+        public bool IsValidPath(string filePath)
+        {
+            return LocalFileSystem.IsValidPath(filePath);
+        }
+
         public bool DoesFileExist(string filePath)
         {
             return File.Exists(filePath);
@@ -29,10 +35,20 @@ namespace Betlln.IO
             return Directory.GetFiles(folder).ToList();
         }
 
-        public void SetReadOnly(string filePath)
+        public void SetReadOnly(string filePath, bool throwIfUnsupported = true)
         {
-            FileInfo fileInfo = new FileInfo(filePath);
-            fileInfo.IsReadOnly = true;
+            try
+            {
+                FileInfo fileInfo = new FileInfo(filePath);
+                fileInfo.IsReadOnly = true;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                if (throwIfUnsupported)
+                {
+                    throw;
+                }
+            }
         }
 
         public void Copy(string source, string destination, bool overwrite = false)
@@ -60,7 +76,7 @@ namespace Betlln.IO
         }
 
         // ReSharper disable once TooManyArguments
-        public FileStream OpenStream(string path, FileMode streamMode, FileAccess accessMode, FileShare shareMode)
+        public Stream OpenStream(string path, FileMode streamMode, FileAccess accessMode, FileShare shareMode)
         {
             return File.Open(path, streamMode, accessMode, shareMode);
         }
