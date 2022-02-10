@@ -3,7 +3,7 @@ using Betlln.Mail;
 
 namespace Betlln.Data.Integration.Mail
 {
-    internal class EmailHostInfo : ConnectionInfo, IDisposable, IEmailPorts
+    internal class EmailHostInfo : ConnectionInfo, IDisposable, IEmailOptions
     {
         public EmailHostInfo(string address, string user, string password)
         {
@@ -14,6 +14,7 @@ namespace Betlln.Data.Integration.Mail
 
         public int ImapPortNumber { get; set; }
         public int SmtpPortNumber { get; set; }
+        public bool RequireSSL { get; set; }
 
         public void Dispose()
         {
