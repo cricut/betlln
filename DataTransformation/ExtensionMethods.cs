@@ -65,7 +65,7 @@ namespace Betlln.Data.Integration
                 {
                     throw new DataException($"The column '{columnMapping.SourceName}' does not belong to the table.");
                 }
-                if (sourceColumn.DataType != columnMapping.ElementType)
+                if (sourceColumn.DataType != columnMapping.ElementType && columnMapping.ElementType != typeof(string))
                 {
                     throw new InvalidCastException(
                         $"Cannot convert {sourceColumn.DataType.Name} to {columnMapping.ElementType.Name} ({sourceColumn.ColumnName})");

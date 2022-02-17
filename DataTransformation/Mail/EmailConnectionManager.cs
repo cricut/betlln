@@ -4,7 +4,7 @@ using Betlln.Mail;
 
 namespace Betlln.Data.Integration.Mail
 {
-    public class EmailConnectionManager : IConnectionManager, IEmailPorts
+    public class EmailConnectionManager : IConnectionManager, IEmailOptions
     {
         public EmailConnectionManager()
         {
@@ -24,12 +24,14 @@ namespace Betlln.Data.Integration.Mail
         public string Password { get; set; }
         public int ImapPortNumber { get; set; }
         public int SmtpPortNumber { get; set; }
+        public bool RequireSSL { get; set; }
 
         public IDisposable GetConnection()
         {
             EmailHostInfo emailHostInfo = new EmailHostInfo(Host, User, Password);
             emailHostInfo.ImapPortNumber = ImapPortNumber;
             emailHostInfo.SmtpPortNumber = SmtpPortNumber;
+            emailHostInfo.RequireSSL = RequireSSL;
             return emailHostInfo;
         }
 

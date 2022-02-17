@@ -57,7 +57,7 @@ namespace Betlln.Data.Integration.Mail
             string[] recipients = To.Split(',');
             foreach (string recipient in recipients)
             {
-                message.To.Add(new MailboxAddress(recipient.Trim()));
+                message.To.Add(new MailboxAddress(recipient.Trim(), recipient.Trim()));
             }
 
             BodyBuilder bodyBuilder = new BodyBuilder();
@@ -80,7 +80,7 @@ namespace Betlln.Data.Integration.Mail
             message.Body = bodyBuilder.ToMessageBody();
 
             string displayName = !string.IsNullOrWhiteSpace(SenderDisplayName) ? SenderDisplayName : credentials.User;
-            message.From.Add(new MailboxAddress(credentials.User) {Name = displayName});
+            message.From.Add(new MailboxAddress(displayName, credentials.User));
 
             SendMessage(credentials, message);
         }
@@ -89,7 +89,7 @@ namespace Betlln.Data.Integration.Mail
         {
             using (IMailClient client = new MailClient())
             {
-                client.Connect(credentials.Destination, credentials.ImapPortNumber, credentials.SmtpPortNumber);
+                client.Connect(credentials.Destination, credentials.ImapPortNumber, credentials.SmtpPortNumber, credentials.RequireSSL);
                 client.Login(credentials.User, credentials.Password);
                 client.Send(message);
             }

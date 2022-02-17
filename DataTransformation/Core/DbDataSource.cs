@@ -171,9 +171,11 @@ namespace Betlln.Data.Integration.Core
                     if (rawValue != null && rawValue != DBNull.Value)
                     {
                         _fieldMappings.Add(fieldIndex, pairing);
-                        if (pairing.ElementType != rawValue.GetType())
+                        Type sourceType = rawValue.GetType();
+                        Type targetType = pairing.ElementType;
+                        if (targetType != sourceType)
                         {
-                            throw new InvalidCastException();
+                            throw new InvalidCastException($"Error loading column {pairing.SourceName}: Cannot convert {sourceType.FullName} to {targetType.FullName}");
                         }
                     }
 
