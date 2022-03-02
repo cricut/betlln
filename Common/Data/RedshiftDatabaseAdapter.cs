@@ -14,6 +14,11 @@ namespace Betlln.Data
         {
         }
 
+        protected RedshiftDatabaseAdapter(string connectionName)
+            : base(connectionName)
+        {
+        }
+
         protected override string BuildConnectionAddressFrom(ConnectionInfo connectionInfo)
         {
             return $"Host={connectionInfo.Destination};Port=5439;Username={connectionInfo.User};Password={connectionInfo.Password};Database={connectionInfo.SubSectionName}";
