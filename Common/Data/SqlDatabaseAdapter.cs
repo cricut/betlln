@@ -107,6 +107,33 @@ namespace Betlln.Data
             }
         }
 
+        protected List<T> ExecuteQueryByString<T>(string sqlAsString, Func<IDataReader, T> objectBuilder)
+        {
+            return ExecuteQuery(ConnectionAddress, sqlAsString, command => BuildObjectList(command, objectBuilder));
+        }
+
+        public void ExecuteNonQueryByString(string sqlAsString)
+        {
+            ExecuteQuery(ConnectionAddress, sqlAsString, command => command.ExecuteNonQuery());
+        }
+
+        // ReSharper disable once TooManyArguments
+        private static T ExecuteQuery<T>(string connectionAddress, string sqlAsString, Func<SqlCommand, T> action)
+        {
+            using (var connection = new SqlConnection(connectionAddress))
+            {
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = sqlAsString;
+                    command.CommandType = CommandType.Text;
+
+                    connection.Open();
+
+                    return action(command);
+                }
+            }
+        }
+
         protected static T? ReadNullableValue<T>(IDataReader reader, string columnName)
             where T : struct 
         {
