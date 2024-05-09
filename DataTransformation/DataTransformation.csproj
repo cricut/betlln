@@ -199,7 +199,7 @@
       <Version>6.0.4</Version>
     </PackageReference>
     <PackageReference Include="System.Threading.Channels">
-      <Version>5.0.0</Version>
+      <Version>8.0.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
