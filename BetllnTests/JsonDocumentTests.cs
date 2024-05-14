@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using Betlln.Data.Integration.Json;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources;
 using NUnit.Framework;
 using JsonDocument = Betlln.Data.Integration.Json.JsonDocument;
 using JsonProperty = Betlln.Data.Integration.Json.JsonProperty;

@@ -130,13 +130,13 @@ namespace Betlln.Data
         {
             List<T> list = new List<T>();
 
-            await using (SqlConnection connection = new SqlConnection(ConnectionAddress))
+            using (SqlConnection connection = new SqlConnection(ConnectionAddress))
             {
-                await using (SqlCommand command = connection.CreateCommand())
+                using (SqlCommand command = connection.CreateCommand())
                 {
                     command.CommandText = query;
                     await command.Connection.OpenAsync();
-                    await using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {

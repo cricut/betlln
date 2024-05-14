@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
         <RootNamespace>Betlln</RootNamespace>
         <PackageVersion>2.0.0</PackageVersion>
         <Authors>Nate Irvin, et. al.</Authors>
+        <TargetFrameworks>net5.0;net472</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,6 +20,9 @@
       <PackageReference Include="MailKit">
         <Version>3.1.1</Version>
       </PackageReference>
+      <PackageReference Include="Newtonsoft.Json">
+        <Version>13.0.3</Version>
+      </PackageReference>
       <PackageReference Include="Npgsql">
         <Version>6.0.3</Version>
       </PackageReference>
@@ -32,6 +35,10 @@
       <PackageReference Include="System.Diagnostics.EventLog">
         <Version>5.0.1</Version>
       </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.VisualBasic" Condition="'$(TargetFramework)' == 'net472'" />
     </ItemGroup>
 
 </Project>
