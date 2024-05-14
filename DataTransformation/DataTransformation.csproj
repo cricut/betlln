@@ -14,7 +14,7 @@
         <Version>3.7.307.32</Version>
       </PackageReference>
       <PackageReference Include="ClosedXML">
-        <Version>0.95.4</Version>
+        <Version>0.102.2</Version>
       </PackageReference>
       <PackageReference Include="Microsoft.Win32.SystemEvents">
         <Version>5.0.0</Version>
