@@ -9,6 +9,11 @@ namespace Betlln.Data
 {
     public abstract class RedshiftDatabaseAdapter : DatabaseAdapter
     {
+        protected RedshiftDatabaseAdapter(string connectionName)
+            : base(connectionName)
+        {
+        }
+
         protected RedshiftDatabaseAdapter(ConnectionInfo dataSourceInfo)
              : base(dataSourceInfo)
         {
