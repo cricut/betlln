@@ -29,7 +29,7 @@
         <Version>13.0.3</Version>
       </PackageReference>
       <PackageReference Include="Npgsql">
-        <Version>6.0.3</Version>
+        <Version>8.0.3</Version>
       </PackageReference>
       <PackageReference Include="System.IO.Compression">
         <Version>4.3.0</Version>
