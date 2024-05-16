@@ -14,6 +14,11 @@ namespace Betlln.Data
         {
         }
 
+        protected RedshiftDatabaseAdapter(string connectionName)
+            : base(connectionName)
+        {
+        }
+
         protected override string BuildConnectionAddressFrom(ConnectionInfo connectionInfo)
         {
             return $"Host={connectionInfo.Destination};Port=5439;Username={connectionInfo.User};Password={connectionInfo.Password};Database={connectionInfo.SubSectionName}";
@@ -48,7 +53,7 @@ namespace Betlln.Data
         {
             List<T> list = new List<T>();
 
-            await using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
+            using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
             {
                 while (await reader.ReadAsync())
                 {
@@ -94,9 +99,9 @@ namespace Betlln.Data
         // ReSharper disable once TooManyArguments
         private static async Task<T> ExecuteQueryAsync<T>(string connectionAddress, string sqlAsString, Func<NpgsqlCommand, Task<T>> action)
         {
-            await using (var connection = new NpgsqlConnection(connectionAddress))
+            using (var connection = new NpgsqlConnection(connectionAddress))
             {
-                await using (NpgsqlCommand command = connection.CreateCommand())
+                using (NpgsqlCommand command = connection.CreateCommand())
                 {
                     command.CommandText = sqlAsString;
                     command.CommandType = CommandType.Text;

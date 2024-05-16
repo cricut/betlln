@@ -130,13 +130,13 @@ namespace Betlln.Data
         {
             List<T> list = new List<T>();
 
-            await using (SqlConnection connection = new SqlConnection(ConnectionAddress))
+            using (SqlConnection connection = new SqlConnection(ConnectionAddress))
             {
-                await using (SqlCommand command = connection.CreateCommand())
+                using (SqlCommand command = connection.CreateCommand())
                 {
                     command.CommandText = query;
                     await command.Connection.OpenAsync();
-                    await using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {
@@ -147,6 +147,33 @@ namespace Betlln.Data
             }
 
             return list;
+        }
+        
+        protected List<T> ExecuteQueryByString<T>(string sqlAsString, Func<IDataReader, T> objectBuilder)
+        {
+            return ExecuteQuery(ConnectionAddress, sqlAsString, command => BuildObjectList(command, objectBuilder));
+        }
+
+        public void ExecuteNonQueryByString(string sqlAsString)
+        {
+            ExecuteQuery(ConnectionAddress, sqlAsString, command => command.ExecuteNonQuery());
+        }
+
+        // ReSharper disable once TooManyArguments
+        private static T ExecuteQuery<T>(string connectionAddress, string sqlAsString, Func<SqlCommand, T> action)
+        {
+            using (var connection = new SqlConnection(connectionAddress))
+            {
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = sqlAsString;
+                    command.CommandType = CommandType.Text;
+
+                    connection.Open();
+
+                    return action(command);
+                }
+            }
         }
 
         protected SqlConnection OpenDatabaseConnection()
