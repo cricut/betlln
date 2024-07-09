@@ -35,6 +35,7 @@
       <PackageReference Include="System.Diagnostics.EventLog">
         <Version>5.0.1</Version>
       </PackageReference>
+      <PackageReference Include="System.Text.Json" Version="8.0.4" />
     </ItemGroup>
 
     <ItemGroup>
